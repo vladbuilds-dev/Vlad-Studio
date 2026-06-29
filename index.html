@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Vlad — design engineer who ships</title>
+<meta name="description" content="Vlad — design engineer. Turnkey sites and landing pages, written like a spec and compiled to ship in days. Built entirely with Claude." />
+<meta name="theme-color" content="#0A0A0B" />
+<meta property="og:title" content="Vlad — design engineer who ships" />
+<meta property="og:description" content="Turnkey sites and landings, written like a spec and shipped in days." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================= TOKENS */
+:root{
+  --bg:#0A0A0B; --bg-soft:#0E0E10; --surface:#131316; --surface-2:#1A1A1E;
+  --ink:#F2EFE9; --ink-2:#CFCBC2; --muted:#86837C; --faint:#5A5853;
+  --line:rgba(242,239,233,.10); --line-2:rgba(242,239,233,.06);
+  --live:#E3A93C; /* the only chromatic accent — reserved for "live/compiling" */
+  --live-soft:rgba(227,169,60,.14);
+  --disp:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Inter",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --pad:clamp(20px,5vw,88px);
+  --maxw:1380px;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --ease-2:cubic-bezier(.65,.05,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--body);
+  font-size:16px; line-height:1.55; letter-spacing:-.01em;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body.lock{overflow:hidden;height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+img{display:block;max-width:100%}
+::selection{background:var(--live);color:#0A0A0B}
+:focus-visible{outline:2px solid var(--live);outline-offset:3px;border-radius:2px}
+
+/* film grain + vignette */
+body::before{
+  content:""; position:fixed; inset:0; z-index:1; pointer-events:none;
+  background:radial-gradient(120% 90% at 50% -10%,transparent 55%,rgba(0,0,0,.5) 100%);
+  mix-blend-mode:multiply;
+}
+.grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 6s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-6%,4%)}40%{transform:translate(4%,-6%)}60%{transform:translate(-4%,2%)}80%{transform:translate(6%,-4%)}100%{transform:translate(0,0)}}
+
+/* ============================================================= TYPE */
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--live);display:inline-flex;align-items:center;gap:.6em}
+.eyebrow::before{content:"";width:18px;height:1px;background:var(--live);display:inline-block}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:500;line-height:.98;letter-spacing:-.03em}
+.path{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;color:var(--faint)}
+.path b{color:var(--ink-2);font-weight:500}
+
+/* ============================================================= FRAME / RULES */
+.frame{position:fixed;z-index:30;pointer-events:none;font-family:var(--mono);
+  font-size:10px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.frame.tl{top:18px;left:var(--pad)}
+.frame.tr{top:18px;right:var(--pad)}
+.frame.bl{bottom:16px;left:var(--pad)}
+.frame.br{bottom:16px;right:var(--pad)}
+@media(max-width:760px){.frame.bl,.frame.br{display:none}}
+
+/* ============================================================= CURSOR */
+.cur,.cur-dot{position:fixed;top:0;left:0;z-index:9998;pointer-events:none;
+  border-radius:50%;mix-blend-mode:difference;will-change:transform}
+.cur{width:34px;height:34px;border:1px solid rgba(242,239,233,.6);
+  transform:translate(-50%,-50%);transition:width .28s var(--ease),height .28s var(--ease),background .28s,border-color .28s}
+.cur-dot{width:5px;height:5px;background:var(--ink);transform:translate(-50%,-50%)}
+.cur.grow{width:64px;height:64px;background:rgba(242,239,233,.12);border-color:transparent}
+.cur.text{width:80px;height:80px;background:var(--ink);border-color:transparent}
+@media(hover:none),(pointer:coarse){.cur,.cur-dot{display:none}}
+
+/* ============================================================= LOADER */
+#loader{position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;justify-content:flex-end;padding:var(--pad);
+  transition:transform 1s var(--ease-2);will-change:transform}
+#loader.done{transform:translateY(-101%)}
+.ld-top{position:absolute;top:var(--pad);left:var(--pad);right:var(--pad);
+  display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.ld-num{font-family:var(--disp);font-weight:300;font-size:clamp(5rem,26vw,22rem);
+  line-height:.8;letter-spacing:-.04em;color:var(--ink);font-variant-numeric:tabular-nums}
+.ld-bar{height:1px;background:var(--line);margin-top:24px;position:relative;overflow:hidden}
+.ld-bar i{position:absolute;inset:0 100% 0 0;background:var(--ink);transition:right .15s linear}
+.ld-cap{margin-top:14px;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.05em}
+.ld-cap b{color:var(--live);font-weight:500}
+
+/* ============================================================= HEADER */
+header{position:fixed;top:0;left:0;right:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px var(--pad);transition:background .4s,backdrop-filter .4s,border-color .4s;
+  border-bottom:1px solid transparent}
+header.scrolled{background:rgba(10,10,11,.72);backdrop-filter:blur(14px) saturate(140%);border-color:var(--line)}
+.brand{display:flex;align-items:baseline;gap:.55em;font-family:var(--disp);font-weight:600;
+  font-size:18px;letter-spacing:-.02em}
+.brand .mk{font-size:13px;font-family:var(--mono);color:var(--live);font-weight:600}
+.brand .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;font-weight:400}
+.nav{display:flex;gap:28px}
+.nav a{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink-2);position:relative;padding:4px 0}
+.nav a span{color:var(--faint);margin-right:4px}
+.nav a::after{content:"";position:absolute;left:0;bottom:-1px;height:1px;width:0;background:var(--ink);transition:width .3s var(--ease)}
+.nav a:hover::after{width:100%}
+.hgroup{display:flex;align-items:center;gap:18px}
+.clock{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.05em;
+  display:flex;align-items:center;gap:7px}
+.clock i{width:6px;height:6px;border-radius:50%;background:var(--live);box-shadow:0 0 0 0 var(--live);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--live-soft)}70%{box-shadow:0 0 0 8px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.lang{display:flex;font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{padding:5px 10px;color:var(--muted);transition:color .25s,background .25s}
+.lang button.active{color:var(--bg);background:var(--ink)}
+.btn-cta{font-family:var(--mono);font-size:12px;letter-spacing:.04em;padding:9px 16px;
+  border:1px solid var(--ink);border-radius:999px;color:var(--ink);
+  display:inline-flex;align-items:center;gap:8px;transition:background .3s,color .3s,gap .3s}
+.btn-cta:hover{background:var(--ink);color:var(--bg);gap:12px}
+.btn-cta .dot{width:6px;height:6px;border-radius:50%;background:var(--live)}
+.burger{display:none;width:34px;height:34px;flex-direction:column;justify-content:center;gap:5px;align-items:flex-end}
+.burger i{height:1.5px;background:var(--ink);transition:.3s var(--ease)}
+.burger i:nth-child(1){width:22px}.burger i:nth-child(2){width:15px}
+@media(max-width:1020px){.nav,.clock{display:none}.burger{display:flex}}
+@media(max-width:600px){.brand .sub{display:none}.lang{display:none}}
+
+/* mobile menu */
+#menu{position:fixed;inset:0;z-index:55;background:var(--bg-soft);
+  transform:translateY(-100%);transition:transform .7s var(--ease-2);
+  display:flex;flex-direction:column;justify-content:center;padding:var(--pad);gap:6px}
+#menu.open{transform:translateY(0)}
+#menu a{font-family:var(--disp);font-size:clamp(2.4rem,11vw,5rem);font-weight:500;
+  color:var(--ink-2);letter-spacing:-.03em;line-height:1.04;display:flex;align-items:baseline;gap:16px;
+  transition:color .25s,padding .35s var(--ease)}
+#menu a span{font-family:var(--mono);font-size:13px;color:var(--faint)}
+#menu a:hover{color:var(--ink);padding-left:18px}
+.menu-foot{margin-top:42px;display:flex;gap:24px;flex-wrap:wrap;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.menu-foot a{font-size:12px;color:var(--muted)}.menu-foot a:hover{color:var(--live)}
+
+/* ============================================================= LAYOUT */
+main{position:relative;z-index:5}
+section{position:relative;padding:clamp(80px,12vh,160px) var(--pad);max-width:var(--maxw);margin:0 auto}
+.sec-head{display:flex;flex-direction:column;gap:18px;margin-bottom:clamp(40px,7vw,80px)}
+.sec-head .row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.sec-title{font-size:clamp(2.4rem,6.5vw,5.2rem);font-weight:500}
+.sec-lead{max-width:46ch;color:var(--muted);font-size:clamp(15px,1.6vw,18px);line-height:1.6}
+hr.div{border:none;height:1px;background:var(--line);max-width:var(--maxw);margin:0 auto}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rv[data-d="1"]{transition-delay:.08s}.rv[data-d="2"]{transition-delay:.16s}
+.rv[data-d="3"]{transition-delay:.24s}.rv[data-d="4"]{transition-delay:.32s}
+
+/* ============================================================= HERO */
+#hero{min-height:100svh;max-width:none;display:flex;flex-direction:column;
+  justify-content:flex-end;padding-bottom:clamp(40px,7vh,80px);overflow:hidden}
+#heroCanvas{position:absolute;inset:0;z-index:0;opacity:.55}
+.hero-grid{position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(var(--line-2) 1px,transparent 1px),linear-gradient(90deg,var(--line-2) 1px,transparent 1px);
+  background-size:64px 64px;mask-image:radial-gradient(120% 90% at 50% 30%,#000 30%,transparent 80%)}
+.hero-inner{position:relative;z-index:3;width:100%;max-width:var(--maxw);margin:0 auto}
+.hero-spec{font-family:var(--mono);font-size:clamp(12px,1.5vw,14px);color:var(--muted);
+  margin-bottom:26px;min-height:1.4em;letter-spacing:.01em}
+.hero-spec .pr{color:var(--live)}
+.hero-spec .cw{color:var(--ink)}
+.caret{display:inline-block;width:9px;height:1.05em;background:var(--live);
+  transform:translateY(2px);animation:blink 1s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+.hero-h1{font-size:clamp(3.2rem,12.5vw,12rem);font-weight:500;line-height:.86;letter-spacing:-.045em}
+.hero-h1 .ln{display:block;overflow:hidden}
+.hero-h1 .ln i{display:block;font-style:normal;transform:translateY(110%);
+  transition:transform 1s var(--ease-2)}
+.hero-h1.go .ln i{transform:translateY(0)}
+.hero-h1 em{font-style:normal;color:var(--faint);
+  -webkit-text-stroke:1px var(--ink-2);-webkit-text-fill-color:transparent}
+.hero-bottom{display:flex;justify-content:space-between;align-items:flex-end;gap:30px;
+  margin-top:clamp(30px,5vw,56px);flex-wrap:wrap}
+.hero-lead{max-width:40ch;color:var(--ink-2);font-size:clamp(15px,1.7vw,19px);line-height:1.55}
+.hero-acts{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:.02em;padding:14px 22px;border-radius:999px;
+  display:inline-flex;align-items:center;gap:10px;transition:.35s var(--ease)}
+.btn-fill{background:var(--ink);color:var(--bg)}
+.btn-fill:hover{background:var(--live);color:#0A0A0B;gap:14px}
+.btn-ghost{border:1px solid var(--line);color:var(--ink-2)}
+.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+.scroll-ind{position:absolute;left:50%;bottom:22px;z-index:3;transform:translateX(-50%);
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:8px}
+.scroll-ind i{width:1px;height:36px;background:linear-gradient(var(--live),transparent);animation:sdrop 2s var(--ease) infinite}
+@keyframes sdrop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ============================================================= STAT STRIP / MARQUEE */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);
+  max-width:var(--maxw);margin:0 auto}
+.stats .st{padding:26px var(--pad) 26px 0;border-left:1px solid var(--line);padding-left:24px}
+.stats .st:first-child{border-left:none;padding-left:0}
+.st .v{font-family:var(--disp);font-size:clamp(1.8rem,4vw,3rem);font-weight:500;letter-spacing:-.03em}
+.st .l{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-top:6px}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.stats .st:nth-child(odd){border-left:none;padding-left:0}.stats .st{padding:18px 0}}
+
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  overflow:hidden;white-space:nowrap;padding:18px 0;background:var(--bg-soft)}
+.marquee .track{display:inline-flex;gap:40px;animation:scroll-x 32s linear infinite;will-change:transform}
+.marquee:hover .track{animation-play-state:paused}
+.marquee span{font-family:var(--disp);font-size:clamp(1.4rem,3vw,2.4rem);font-weight:500;
+  color:var(--faint);letter-spacing:-.02em;display:inline-flex;align-items:center;gap:40px}
+.marquee span::after{content:"✦";color:var(--live);font-size:.55em}
+@keyframes scroll-x{to{transform:translateX(-50%)}}
+
+/* ============================================================= ABOUT / MANIFESTO */
+#about .big{font-family:var(--disp);font-weight:400;font-size:clamp(1.7rem,4.6vw,3.6rem);
+  line-height:1.12;letter-spacing:-.025em;max-width:24ch}
+#about .big b{font-weight:500;color:var(--ink)}
+#about .big .q{color:var(--faint)}
+.about-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:clamp(50px,7vw,90px)}
+.about-meta .m h4{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--live);font-weight:500;margin-bottom:14px}
+.about-meta .m p{color:var(--ink-2);font-size:15px;line-height:1.6}
+.about-meta .m ul{list-style:none;font-family:var(--mono);font-size:13px;color:var(--muted);line-height:2}
+.about-meta .m li::before{content:"→ ";color:var(--faint)}
+@media(max-width:760px){.about-meta{grid-template-columns:1fr;gap:34px}}
+
+/* ============================================================= WORK */
+.filters{display:flex;gap:10px;flex-wrap:wrap}
+.filters button{font-family:var(--mono);font-size:12px;padding:7px 14px;border:1px solid var(--line);
+  border-radius:999px;color:var(--muted);transition:.25s}
+.filters button[aria-pressed="true"]{color:var(--bg);background:var(--ink);border-color:var(--ink)}
+.filters button:hover{color:var(--ink)}
+.work-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.card{grid-column:span 6;position:relative;border:1px solid var(--line);border-radius:14px;
+  overflow:hidden;background:var(--surface);transition:border-color .4s,transform .5s var(--ease);
+  display:flex;flex-direction:column;min-height:340px}
+.card.feat{grid-column:span 12;min-height:440px}
+.card:hover{border-color:rgba(242,239,233,.28);transform:translateY(-4px)}
+.card .thumb{position:relative;flex:1;overflow:hidden;background:var(--c1,#161616)}
+.card .thumb svg{position:absolute;inset:0;width:100%;height:100%}
+.card .meta{padding:20px 22px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.card .meta .top{display:flex;justify-content:space-between;align-items:baseline;gap:14px}
+.card .meta h3{font-size:clamp(1.3rem,2.4vw,2rem);font-weight:500}
+.card .yr{font-family:var(--mono);font-size:11px;color:var(--faint)}
+.card .meta p{color:var(--muted);font-size:14px;line-height:1.55;max-width:54ch}
+.card .tags{display:flex;gap:8px;flex-wrap:wrap}
+.card .tags i{font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;
+  text-transform:uppercase;color:var(--ink-2);border:1px solid var(--line);padding:4px 9px;border-radius:6px}
+.card .open{position:absolute;top:16px;right:16px;z-index:4;width:44px;height:44px;border-radius:50%;
+  background:rgba(10,10,11,.55);backdrop-filter:blur(6px);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;transition:.35s var(--ease)}
+.card .open svg{width:16px;height:16px;stroke:var(--ink);position:static;transition:transform .35s var(--ease)}
+.card:hover .open{background:var(--live);border-color:var(--live)}
+.card:hover .open svg{transform:rotate(45deg);stroke:#0A0A0B}
+.card .live{position:absolute;top:18px;left:18px;z-index:4;font-family:var(--mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:6px;
+  background:rgba(10,10,11,.5);backdrop-filter:blur(6px);padding:5px 10px;border-radius:999px;border:1px solid var(--line)}
+.card .live i{width:6px;height:6px;border-radius:50%;background:var(--live);animation:pulse 2s infinite}
+.card.hide{display:none}
+@media(max-width:900px){.card{grid-column:span 12}}
+
+/* ============================================================= PROMPT LAB */
+#lab{background:var(--bg-soft)}
+.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.spec{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;transition:border-color .3s}
+.spec:hover{border-color:rgba(242,239,233,.22)}
+.spec .bar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em}
+.spec .bar .dots{display:flex;gap:6px}.spec .bar .dots i{width:9px;height:9px;border-radius:50%;background:var(--surface-2)}
+.spec .bar .dots i:first-child{background:var(--live)}
+.spec .bar .fn{margin-left:auto;color:var(--faint)}
+.spec .body{padding:22px 20px;display:flex;flex-direction:column;gap:14px}
+.spec h3{font-size:clamp(1.2rem,2vw,1.6rem);font-weight:500}
+.spec .code{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);line-height:1.6;
+  background:var(--bg);border:1px solid var(--line-2);border-radius:8px;padding:14px;white-space:pre-wrap}
+.spec .code .k{color:var(--live)}.spec .code .c{color:var(--faint)}
+.spec p{color:var(--muted);font-size:14px;line-height:1.6}
+.spec .tags{display:flex;gap:7px;flex-wrap:wrap}
+.spec .tags i{font-style:normal;font-family:var(--mono);font-size:10px;text-transform:uppercase;
+  letter-spacing:.06em;color:var(--muted);border:1px solid var(--line);padding:3px 8px;border-radius:5px}
+@media(max-width:820px){.lab-grid{grid-template-columns:1fr}}
+
+/* ============================================================= SERVICES */
+.svc{border-top:1px solid var(--line)}
+.svc .row{display:grid;grid-template-columns:60px 1fr 1.2fr 70px;gap:24px;align-items:center;
+  padding:30px 0;border-bottom:1px solid var(--line);position:relative;transition:padding .4s var(--ease)}
+.svc .row::before{content:"";position:absolute;left:-100vw;right:-100vw;top:0;bottom:0;
+  background:var(--surface);transform:scaleY(0);transform-origin:bottom;transition:transform .45s var(--ease);z-index:-1}
+.svc .row:hover{padding-left:18px;padding-right:18px}
+.svc .row:hover::before{transform:scaleY(1);transform-origin:top}
+.svc .n{font-family:var(--mono);font-size:13px;color:var(--faint)}
+.svc h3{font-size:clamp(1.3rem,2.6vw,2rem);font-weight:500}
+.svc p{color:var(--muted);font-size:14.5px;line-height:1.55}
+.svc .ar{justify-self:end;color:var(--faint);font-size:22px;transition:color .3s,transform .3s var(--ease)}
+.svc .row:hover .ar{color:var(--live);transform:translate(4px,-4px)}
+@media(max-width:760px){.svc .row{grid-template-columns:40px 1fr;gap:8px 16px;padding:24px 0}.svc p{grid-column:2}.svc .ar{display:none}}
+
+/* ============================================================= PROCESS */
+.proc{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-left:1px solid var(--line)}
+.proc .step{border-right:1px solid var(--line);padding:26px 22px;min-height:300px;
+  display:flex;flex-direction:column;transition:background .4s}
+.proc .step:hover{background:var(--surface)}
+.proc .step .n{font-family:var(--mono);font-size:11px;color:var(--live);letter-spacing:.1em}
+.proc .step .state{font-family:var(--mono);font-size:10px;color:var(--faint);margin-top:auto;text-transform:uppercase;letter-spacing:.08em}
+.proc .step h3{font-size:1.5rem;font-weight:500;margin:30px 0 14px}
+.proc .step p{color:var(--muted);font-size:13.5px;line-height:1.55}
+@media(max-width:900px){.proc{grid-template-columns:1fr;border-left:none}.proc .step{border-right:none;border-bottom:1px solid var(--line);min-height:0}}
+
+/* ============================================================= REVIEWS */
+#reviews{overflow:hidden}
+.rev-track{display:flex;gap:18px;will-change:transform}
+.rev{flex:0 0 clamp(280px,30vw,420px);border:1px solid var(--line);border-radius:12px;
+  padding:28px;background:var(--surface);display:flex;flex-direction:column;gap:20px}
+.rev .qt{font-size:18px;line-height:1.5;color:var(--ink-2);letter-spacing:-.01em}
+.rev .by{display:flex;align-items:center;gap:12px;margin-top:auto}
+.rev .av{width:38px;height:38px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;color:var(--ink)}
+.rev .nm{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.rev .star{color:var(--live);font-size:12px;letter-spacing:2px}
+
+/* ============================================================= CATALOG */
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.price{border:1px solid var(--line);border-radius:12px;padding:26px;background:var(--surface);
+  display:flex;flex-direction:column;gap:14px;transition:.4s var(--ease);position:relative;overflow:hidden}
+.price:hover{border-color:rgba(242,239,233,.26);transform:translateY(-4px)}
+.price .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--live);align-self:flex-start;border:1px solid var(--live-soft);padding:4px 9px;border-radius:6px;background:var(--live-soft)}
+.price h3{font-size:1.5rem;font-weight:500;margin-top:4px}
+.price p{color:var(--muted);font-size:14px;line-height:1.55;flex:1}
+.price .from{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.price .from b{font-family:var(--disp);font-size:1.4rem;font-weight:500;letter-spacing:-.02em}
+.price a.more{font-family:var(--mono);font-size:12px;color:var(--ink-2);display:inline-flex;gap:8px;align-items:center;transition:gap .3s,color .3s}
+.price a.more:hover{color:var(--live);gap:12px}
+@media(max-width:900px){.cat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.cat-grid{grid-template-columns:1fr}}
+
+/* ============================================================= CTA */
+#cta{text-align:center;display:flex;flex-direction:column;align-items:center;gap:28px}
+#cta h2{font-size:clamp(2.6rem,9vw,8rem);font-weight:500;line-height:.92;letter-spacing:-.04em}
+#cta h2 em{font-style:normal;color:var(--faint);-webkit-text-stroke:1px var(--ink-2);-webkit-text-fill-color:transparent}
+#cta p{color:var(--muted);max-width:40ch;font-size:16px}
+.cta-mail{font-family:var(--mono);font-size:clamp(13px,2vw,16px);color:var(--ink-2);
+  border-bottom:1px solid var(--line);padding-bottom:6px;transition:color .3s,border-color .3s}
+.cta-mail:hover{color:var(--live);border-color:var(--live)}
+
+/* ============================================================= FOOTER */
+footer{border-top:1px solid var(--line);padding:clamp(50px,7vw,90px) var(--pad) 30px;
+  max-width:var(--maxw);margin:0 auto;position:relative;z-index:5}
+.foot-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:40px;margin-bottom:60px}
+.foot-grid h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:18px;font-weight:500}
+.foot-grid .big{font-family:var(--disp);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:500;line-height:1.15;letter-spacing:-.02em;max-width:20ch}
+.foot-grid ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.foot-grid a{font-family:var(--mono);font-size:13px;color:var(--ink-2);transition:color .25s}
+.foot-grid a:hover{color:var(--live)}
+.foot-watermark{font-family:var(--disp);font-weight:600;font-size:clamp(4rem,22vw,18rem);line-height:.8;
+  letter-spacing:-.05em;color:transparent;-webkit-text-stroke:1px var(--line);
+  -webkit-text-fill-color:transparent;user-select:none;margin:10px 0 30px}
+.foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  border-top:1px solid var(--line);padding-top:24px;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.04em}
+.foot-bottom a:hover{color:var(--live)}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr;gap:34px}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001s!important;transition-duration:.1s!important}
+  .rv{opacity:1;transform:none}.hero-h1 .ln i{transform:none}
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="cur"></div><div class="cur-dot"></div>
+
+<!-- frame coords -->
+<div class="frame bl">BUILT WITH CLAUDE</div>
+<div class="frame br" id="fscroll">000%</div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="ld-top"><span>VLAD — DESIGN ENGINEER</span><span id="ldClock">--:--:--</span></div>
+  <div class="ld-num" id="ldNum">000</div>
+  <div class="ld-bar"><i id="ldBar"></i></div>
+  <div class="ld-cap"><span id="ldCap">booting</span> · <b>compiling portfolio</b></div>
+</div>
+
+<!-- HEADER -->
+<header id="hdr">
+  <a href="#hero" class="brand" data-magnetic>
+    <span class="mk">[V]</span>Vlad<span class="sub" data-i18n="brandSub">/ design engineer</span>
+  </a>
+  <nav class="nav">
+    <a href="#work"><span>01</span><b data-i18n="navWork">Work</b></a>
+    <a href="#lab"><span>02</span><b data-i18n="navLab">Prompt Lab</b></a>
+    <a href="#services"><span>03</span><b data-i18n="navServices">Services</b></a>
+    <a href="#process"><span>04</span><b data-i18n="navProcess">Process</b></a>
+    <a href="#catalog"><span>05</span><b data-i18n="navCatalog">Catalog</b></a>
+  </nav>
+  <div class="hgroup">
+    <div class="clock"><i></i><span id="hdrClock">--:--</span></div>
+    <div class="lang">
+      <button data-lang="en" class="active">EN</button>
+      <button data-lang="ru">RU</button>
+    </div>
+    <a href="#cta" class="btn-cta" data-magnetic><span class="dot"></span><span data-i18n="navCta">Get in touch</span></a>
+    <button class="burger" id="burger" aria-label="Menu"><i></i><i></i></button>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<div id="menu">
+  <a href="#work"><span>01</span><span data-i18n="navWork">Work</span></a>
+  <a href="#lab"><span>02</span><span data-i18n="navLab">Prompt Lab</span></a>
+  <a href="#services"><span>03</span><span data-i18n="navServices">Services</span></a>
+  <a href="#process"><span>04</span><span data-i18n="navProcess">Process</span></a>
+  <a href="#catalog"><span>05</span><span data-i18n="navCatalog">Catalog</span></a>
+  <a href="#cta"><span>06</span><span data-i18n="navCta">Get in touch</span></a>
+  <div class="menu-foot">
+    <a href="https://t.me/" target="_blank" rel="noopener">Telegram</a>
+    <a href="mailto:abramov.vladislaw@gmail.com">Email</a>
+    <span>EN / RU</span>
+  </div>
+</div>
+
+<main>
+<!-- HERO -->
+<section id="hero">
+  <canvas id="heroCanvas"></canvas>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-spec" id="heroSpec"></div>
+    <h1 class="hero-h1" id="heroH1">
+      <span class="ln"><i data-i18n="h1a">Sites that</i></span>
+      <span class="ln"><i data-i18n="h1b">look <em>expensive</em></i></span>
+      <span class="ln"><i data-i18n="h1c">&amp; ship fast.</i></span>
+    </h1>
+    <div class="hero-bottom">
+      <p class="hero-lead" data-i18n="heroLead">I’m Vlad — a design engineer. I write your site like a spec and compile it to ship in days: turnkey landings and sites that load in under a second and look great on a phone.</p>
+      <div class="hero-acts">
+        <a href="#cta" class="btn btn-fill" data-magnetic><span data-i18n="heroBtn1">Start a project</span> →</a>
+        <a href="#work" class="btn btn-ghost" data-magnetic data-i18n="heroBtn2">View 12 builds</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="st rv"><div class="v" data-count="7" data-suffix="d">7d</div><div class="l" data-i18n="stat1">avg. ship time</div></div>
+  <div class="st rv" data-d="1"><div class="v" data-count="12">12</div><div class="l" data-i18n="stat2">live builds</div></div>
+  <div class="st rv" data-d="2"><div class="v" data-count="100" data-suffix="%">100%</div><div class="l" data-i18n="stat3">responsive</div></div>
+  <div class="st rv" data-d="3"><div class="v"><span data-i18n="stat4v">&lt;1s</span></div><div class="l" data-i18n="stat4">load time</div></div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="track" id="mqTrack"></div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <p class="eyebrow rv" data-i18n="aboutEy">~/about</p>
+  <p class="big rv" data-d="1" data-i18n-html="aboutBig">Most sites are <span class="q">briefed</span>, then guessed at. <b>I write yours as a precise spec</b> — every color, motion and breakpoint fixed — then build it in a single, fast, hand-tuned file. <b>No templates. No bloat.</b></p>
+  <div class="about-meta">
+    <div class="m rv"><h4 data-i18n="am1H">Approach</h4><p data-i18n="am1P">One file, no build step, no framework tax. Semantic markup, real performance, and motion that means something.</p></div>
+    <div class="m rv" data-d="1"><h4 data-i18n="am2H">Stack</h4><ul>
+      <li>HTML / CSS / JS</li><li>Next.js · Tailwind</li><li>Canvas · WebGL · GSAP</li><li>Claude-native workflow</li></ul></div>
+    <div class="m rv" data-d="2"><h4 data-i18n="am3H">Good for</h4><ul>
+      <li data-i18n="am3a">Local business</li><li data-i18n="am3b">Studios & brands</li><li data-i18n="am3c">SaaS & fintech</li><li data-i18n="am3d">Portfolios</li></ul></div>
+  </div>
+</section>
+
+<hr class="div" />
+
+<!-- WORK -->
+<section id="work">
+  <div class="sec-head">
+    <p class="path rv">~/work — <b id="workCount">12 projects</b> · 2024–2025</p>
+    <div class="row">
+      <h2 class="sec-title rv" data-d="1" data-i18n="workTitle">Selected builds</h2>
+      <div class="filters rv" data-d="2" id="filters"></div>
+    </div>
+  </div>
+  <div class="work-grid" id="workGrid"></div>
+</section>
+
+<hr class="div" />
+
+<!-- PROMPT LAB -->
+<section id="lab">
+  <div class="sec-head">
+    <p class="eyebrow rv" data-i18n="labEy">~/prompt-lab</p>
+    <div class="row">
+      <h2 class="sec-title rv" data-d="1" data-i18n="labTitle">The spec is the product</h2>
+      <p class="sec-lead rv" data-d="2" data-i18n="labLead">I keep a growing library of design-spec prompts — full technical blueprints that compile a whole site without a single template. A few from the shelf:</p>
+    </div>
+  </div>
+  <div class="lab-grid" id="labGrid"></div>
+</section>
+
+<hr class="div" />
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="sec-head">
+    <p class="eyebrow rv" data-i18n="svcEy">~/services</p>
+    <h2 class="sec-title rv" data-d="1" data-i18n="svcTitle">What I do</h2>
+  </div>
+  <div class="svc" id="svcList"></div>
+</section>
+
+<hr class="div" />
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="sec-head">
+    <p class="eyebrow rv" data-i18n="prcEy">~/process</p>
+    <div class="row">
+      <h2 class="sec-title rv" data-d="1" data-i18n="prcTitle">Brief to launch</h2>
+      <p class="sec-lead rv" data-d="2" data-i18n="prcLead">Five steps, fully transparent. You always know what’s done and what’s next.</p>
+    </div>
+  </div>
+  <div class="proc rv" data-d="1" id="procGrid"></div>
+</section>
+
+<hr class="div" />
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="sec-head">
+    <p class="eyebrow rv" data-i18n="revEy">~/reviews</p>
+    <h2 class="sec-title rv" data-d="1" data-i18n="revTitle">What clients say</h2>
+  </div>
+  <div class="rev-track" id="revTrack"></div>
+</section>
+
+<hr class="div" />
+
+<!-- CATALOG -->
+<section id="catalog">
+  <div class="sec-head">
+    <p class="eyebrow rv" data-i18n="catEy">~/catalog</p>
+    <div class="row">
+      <h2 class="sec-title rv" data-d="1" data-i18n="catTitle">Ready-made solutions</h2>
+      <p class="sec-lead rv" data-d="2" data-i18n="catLead">Fixed-scope packages with transparent starting prices. Each one is tailored, never a constructor template.</p>
+    </div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+</section>
+
+<hr class="div" />
+
+<!-- CTA -->
+<section id="cta">
+  <p class="eyebrow rv" data-i18n="ctaEy">~/let’s-talk</p>
+  <h2 class="rv" data-d="1" data-i18n-html="ctaH2">Let’s build<br>something <em>fast.</em></h2>
+  <p class="rv" data-d="2" data-i18n="ctaP">Tell me about your project — we’ll lock the goal, timeline and price. I reply quickly.</p>
+  <a href="mailto:abramov.vladislaw@gmail.com" class="cta-mail rv" data-d="3" data-magnetic>abramov.vladislaw@gmail.com →</a>
+  <a href="#hero" class="btn btn-fill rv" data-d="3" data-magnetic data-i18n="ctaBtn">Start a project</a>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <h4 data-i18n="footAbout">// studio</h4>
+      <p class="big" data-i18n="footBig">A one-person studio that writes the spec and ships the site.</p>
+    </div>
+    <div>
+      <h4 data-i18n="footNav">// sections</h4>
+      <ul>
+        <li><a href="#work" data-i18n="navWork">Work</a></li>
+        <li><a href="#lab" data-i18n="navLab">Prompt Lab</a></li>
+        <li><a href="#services" data-i18n="navServices">Services</a></li>
+        <li><a href="#catalog" data-i18n="navCatalog">Catalog</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 data-i18n="footContact">// contact</h4>
+      <ul>
+        <li><a href="mailto:abramov.vladislaw@gmail.com">Email</a></li>
+        <li><a href="https://t.me/" target="_blank" rel="noopener">Telegram</a></li>
+        <li><a href="#cta" data-i18n="footCta">Discuss a project →</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot-watermark" aria-hidden="true">VLAD</div>
+  <div class="foot-bottom">
+    <span data-i18n="footCopy">© 2025 Vlad · Handcrafted, compiled with Claude</span>
+    <a href="#hero" data-magnetic data-i18n="footTop">Back to top ↑</a>
+  </div>
+</footer>
+
+<script>
+/* ============================================================ DATA */
+const ENC = s => encodeURI(s);
+const DIR = "../EXSAMPLE/Макеты/", MS = DIR + "My Skiils/My skiils/";
+
+const DATA = {
+  en:{
+    brandSub:"/ design engineer",
+    navWork:"Work",navLab:"Prompt Lab",navServices:"Services",navProcess:"Process",navCatalog:"Catalog",navCta:"Get in touch",
+    h1a:"Sites that",h1b:"look <em>expensive</em>",h1c:"& ship fast.",
+    heroLead:"I’m Vlad — a design engineer. I write your site like a spec and compile it to ship in days: turnkey landings that load in under a second and look great on a phone.",
+    heroBtn1:"Start a project",heroBtn2:"View 12 builds",scrollHint:"scroll",
+    stat1:"avg. ship time",stat2:"live builds",stat3:"responsive",stat4:"load time",stat4v:"<1s",
+    aboutEy:"~/about",
+    aboutBig:"Most sites are <span class='q'>briefed</span>, then guessed at. <b>I write yours as a precise spec</b> — every color, motion and breakpoint fixed — then build it in a single, fast, hand-tuned file. <b>No templates. No bloat.</b>",
+    am1H:"Approach",am1P:"One file, no build step, no framework tax. Semantic markup, real performance, and motion that means something.",
+    am2H:"Stack",am3H:"Good for",am3a:"Local business",am3b:"Studios & brands",am3c:"SaaS & fintech",am3d:"Portfolios",
+    workTitle:"Selected builds",
+    labEy:"~/prompt-lab",labTitle:"The spec is the product",
+    labLead:"I keep a growing library of design-spec prompts — full technical blueprints that compile a whole site without a single template. A few from the shelf:",
+    svcEy:"~/services",svcTitle:"What I do",
+    prcEy:"~/process",prcTitle:"Brief to launch",prcLead:"Five steps, fully transparent. You always know what’s done and what’s next.",
+    revEy:"~/reviews",revTitle:"What clients say",
+    catEy:"~/catalog",catTitle:"Ready-made solutions",catLead:"Fixed-scope packages with transparent starting prices. Each one is tailored, never a constructor template.",
+    ctaEy:"~/let’s-talk",ctaH2:"Let’s build<br>something <em>fast.</em>",ctaP:"Tell me about your project — we’ll lock the goal, timeline and price. I reply quickly.",ctaBtn:"Start a project",
+    footAbout:"// studio",footBig:"A one-person studio that writes the spec and ships the site.",footNav:"// sections",footContact:"// contact",footCta:"Discuss a project →",footCopy:"© 2025 Vlad · Handcrafted, compiled with Claude",footTop:"Back to top ↑",
+    filters:["All","Studio","Local biz","Fintech / SaaS","Template"],
+    marquee:["Turnkey sites","Landing pages","Motion design","Performance","Single-file craft","Bilingual EN/RU","Claude-native","Ships in days"],
+    services:[
+      {h:"On-brand design",p:"Not a constructor template — a look tailored to your niche, palette and goals."},
+      {h:"Turnkey landings",p:"One-pagers that sell: a sharp offer and one clear call to action."},
+      {h:"Responsive, always",p:"Flawless on phone, tablet and desktop — no extra setup on your side."},
+      {h:"Motion & 3D",p:"Canvas, WebGL and scroll choreography that make the page feel alive, not busy."},
+      {h:"Clean code & SEO",p:"Semantic markup, meta tags and speed — loved by people and search engines alike."}
+    ],
+    process:[
+      {t:"Brief",s:"01",st:"Done",d:"We get on a call and break down the task, audience and references. The site’s goal gets locked."},
+      {t:"Spec",s:"02",st:"Done",d:"I write the full spec: structure, copy, colors, motion — every screen decided before a line of code."},
+      {t:"Build",s:"03",st:"In progress",d:"Clean markup, animation, responsive across phone, tablet and desktop. Compiled in one fast file."},
+      {t:"Test",s:"04",st:"Next",d:"Checked on real devices — speed, links, edge cases. The small stuff gets fixed."},
+      {t:"Launch",s:"05",st:"Next",d:"Deploy, domain, analytics. Then support and improvements as you grow."}
+    ],
+    reviews:[
+      {in:"AK",a:"Anna K. · coffee shop",t:"Built the coffee-shop site in a week — leads came in from day one. Fast and to the point."},
+      {in:"DO",a:"Dmitry O. · fitness",t:"The gym got a fast, responsive site. Clients book right from their phones."},
+      {in:"MS",a:"Marina S. · spa",t:"The spa site looks expensive and loads instantly. Exactly the mood I wanted."},
+      {in:"IP",a:"Igor P. · barbershop",t:"Online booking works without a single bug. Simple to manage — figured it out myself."},
+      {in:"EV",a:"Elena V. · store",t:"Explains clearly, fixes fast and doesn’t vanish after launch. A rare find."},
+      {in:"SK",a:"Sergey K. · developer",t:"Clean code and real attention to detail. Handed it to another dev — zero questions."},
+      {in:"ON",a:"Olga N. · brand",t:"The new landing converts twice as well as the old one. Paid off in the first month."}
+    ],
+    catalog:[
+      {tag:"Landing",h:"Turnkey landing",p:"A one-pager with a clear offer and a lead form. Perfect to launch a service or product fast.",from:"from",price:"150 USDT"},
+      {tag:"Store",h:"Online store",p:"Catalog, cart and online payment. Customers check out in a couple of taps from their phone.",from:"from",price:"350 USDT"},
+      {tag:"Business",h:"Corporate site",p:"A multi-page site about the company: services, cases, team and contacts. Solid and on-brand.",from:"from",price:"300 USDT"},
+      {tag:"SaaS",h:"SaaS landing",p:"A digital-product showcase: pricing, features and a demo. Dark, tech interface with animation.",from:"from",price:"250 USDT"},
+      {tag:"Booking",h:"Booking site",p:"Booking right on the site: barbershop, spa, clinic. Calendar, confirmation and reminders.",from:"from",price:"200 USDT"},
+      {tag:"Portfolio",h:"Portfolio site",p:"A work showcase with animation and 3D scenes — so the project sticks from the first screen.",from:"from",price:"180 USDT"}
+    ],
+    more:"Discuss",
+    lab:[
+      {fn:"lumora.spec.md",h:"Lumora — single-file studio",code:"<span class='c'># recreate as one index.html</span>\nbuild <span class='k'>Lumora</span> studio site:\n  · liquid cursor photo-reveal\n  · Lenis smooth scroll\n  · rAF spring engine, <span class='k'>no framework</span>",p:"A full technical spec to rebuild a portfolio in one HTML file — every color, font, timer and animation fixed.",tags:["single-file","lenis","spring"]},
+      {fn:"ascii-hero.tsx",h:"ASCII hero",code:"<span class='c'>// shadcn + tailwind + ts</span>\nimport <span class='k'>HeroAsciiOne</span>\nbg: <span class='k'>UnicornStudio</span> ascii field\npalette: black & white, lucide icons",p:"Integration spec for a dynamic ASCII-animated hero on a shadcn/ui + Tailwind stack.",tags:["react","shadcn","ascii"]},
+      {fn:"minimal-hero.tsx",h:"Minimalist hero",code:"<span class='c'>// framer-motion</span>\n<span class='k'>&lt;MinimalistHero</span>\n  title · links · image\n  icons={lucide} <span class='k'>/&gt;</span>",p:"A clean, prop-driven hero with framer-motion entrance, ready to drop into any TS project.",tags:["framer","props","clean"]},
+      {fn:"spline-hero.tsx",h:"3D Spline hero",code:"<span class='c'># 3D background</span>\nimport <span class='k'>Spline</span>\nscene: react-spline\nfallback: unsplash + lucide",p:"Spec for a hero with an interactive 3D Spline scene behind minimalist content.",tags:["3d","spline","react"]}
+    ]
+  },
+  ru:{
+    brandSub:"/ дизайн-инженер",
+    navWork:"Работы",navLab:"Промт-лаб",navServices:"Услуги",navProcess:"Процесс",navCatalog:"Каталог",navCta:"Написать",
+    h1a:"Сайты, которые",h1b:"выглядят <em>дорого</em>",h1c:"и быстро запускаются.",
+    heroLead:"Я Влад — дизайн-инженер. Я пишу твой сайт как спецификацию и компилирую его за дни: лендинги под ключ, которые грузятся меньше секунды и отлично смотрятся на телефоне.",
+    heroBtn1:"Начать проект",heroBtn2:"Смотреть 12 работ",scrollHint:"листай",
+    stat1:"средний срок",stat2:"живых работ",stat3:"адаптив",stat4:"загрузка",stat4v:"<1с",
+    aboutEy:"~/обо-мне",
+    aboutBig:"Большинство сайтов <span class='q'>брифуют</span>, а потом угадывают. <b>Я пишу твой как точную спецификацию</b> — каждый цвет, движение и брейкпоинт зафиксированы — и собираю в одном быстром файле вручную. <b>Без шаблонов. Без лишнего.</b>",
+    am1H:"Подход",am1P:"Один файл, без сборки и налога фреймворков. Семантичная вёрстка, реальная скорость и движение со смыслом.",
+    am2H:"Стек",am3H:"Подходит",am3a:"Локальный бизнес",am3b:"Студии и бренды",am3c:"SaaS и финтех",am3d:"Портфолио",
+    workTitle:"Избранные работы",
+    labEy:"~/промт-лаб",labTitle:"Спецификация — это продукт",
+    labLead:"Я веду растущую библиотеку промтов-спеков — полные технические чертежи, которые компилируют сайт целиком без единого шаблона. Несколько с полки:",
+    svcEy:"~/услуги",svcTitle:"Что я делаю",
+    prcEy:"~/процесс",prcTitle:"От брифа до запуска",prcLead:"Пять шагов, полная прозрачность. Ты всегда знаешь, что готово и что дальше.",
+    revEy:"~/отзывы",revTitle:"Что говорят клиенты",
+    catEy:"~/каталог",catTitle:"Готовые решения",catLead:"Пакеты с фиксированным объёмом и прозрачной стартовой ценой. Каждый — под тебя, не шаблон из конструктора.",
+    ctaEy:"~/давай-обсудим",ctaH2:"Соберём что-то<br><em>быстрое.</em>",ctaP:"Расскажи о проекте — зафиксируем цель, сроки и стоимость. Отвечаю быстро.",ctaBtn:"Начать проект",
+    footAbout:"// студия",footBig:"Студия одного человека: пишу спецификацию и запускаю сайт.",footNav:"// разделы",footContact:"// контакты",footCta:"Обсудить проект →",footCopy:"© 2025 Влад · Сделано вручную, скомпилировано с Claude",footTop:"Наверх ↑",
+    filters:["Все","Студии","Локальный бизнес","Финтех / SaaS","Шаблон"],
+    marquee:["Сайты под ключ","Лендинги","Моушн-дизайн","Скорость","Один файл","EN/RU билингва","Claude-native","Запуск за дни"],
+    services:[
+      {h:"Дизайн под бренд",p:"Не шаблон из конструктора — облик под твою нишу, палитру и задачи."},
+      {h:"Лендинги под ключ",p:"Одностраничники, которые продают: чёткий оффер и одна кнопка действия."},
+      {h:"Всегда адаптив",p:"Идеально на телефоне, планшете и компьютере — без лишних настроек с твоей стороны."},
+      {h:"Моушн и 3D",p:"Canvas, WebGL и скролл-хореография, от которых страница живёт, а не мельтешит."},
+      {h:"Чистый код и SEO",p:"Семантичная вёрстка, метатеги и скорость — сайт любят и люди, и поисковики."}
+    ],
+    process:[
+      {t:"Бриф",s:"01",st:"Готово",d:"Созваниваемся, разбираем задачу, аудиторию и примеры. Фиксируем цель сайта."},
+      {t:"Спека",s:"02",st:"Готово",d:"Пишу полную спецификацию: структура, тексты, цвета, движение — каждый экран решён до кода."},
+      {t:"Сборка",s:"03",st:"В работе",d:"Чистая вёрстка, анимации, адаптив под телефон, планшет и десктоп. Один быстрый файл."},
+      {t:"Тест",s:"04",st:"Далее",d:"Проверяю на реальных устройствах — скорость, ссылки, крайние случаи. Правлю мелочи."},
+      {t:"Запуск",s:"05",st:"Далее",d:"Деплой, домен, аналитика. Дальше — поддержка и доработки по мере роста."}
+    ],
+    reviews:[
+      {in:"АК",a:"Анна К. · кофейня",t:"Сделал сайт кофейни за неделю — заявки пошли с первого дня. Быстро и по делу."},
+      {in:"ДО",a:"Дмитрий О. · фитнес",t:"Клуб получил быстрый адаптивный сайт. Клиенты записываются прямо с телефона."},
+      {in:"МС",a:"Марина С. · спа",t:"Спа-сайт выглядит дорого и грузится мгновенно. Ровно та атмосфера, что хотела."},
+      {in:"ИП",a:"Игорь П. · барбершоп",t:"Онлайн-запись завелась без единого бага. Управлять просто — разобрался сам."},
+      {in:"ЕВ",a:"Елена В. · магазин",t:"Понятно объясняет, правит быстро и не пропадает после запуска. Большая редкость."},
+      {in:"СК",a:"Сергей К. · разработчик",t:"Чистый код и внимание к деталям. Передал другому — вопросов не возникло."},
+      {in:"ОН",a:"Ольга Н. · бренд",t:"Новый лендинг конвертит вдвое лучше прежнего. Окупился за первый месяц."}
+    ],
+    catalog:[
+      {tag:"Лендинг",h:"Лендинг под ключ",p:"Одностраничник с чётким оффером и формой заявки. Чтобы быстро запустить услугу или продукт.",from:"от",price:"150 USDT"},
+      {tag:"Магазин",h:"Интернет-магазин",p:"Каталог, корзина и онлайн-оплата. Покупатель оформляет заказ в пару кликов с телефона.",from:"от",price:"350 USDT"},
+      {tag:"Бизнес",h:"Корпоративный сайт",p:"Многостраничник о компании: услуги, кейсы, команда и контакты. Солидно и под бренд.",from:"от",price:"300 USDT"},
+      {tag:"SaaS",h:"SaaS-лендинг",p:"Презентация цифрового продукта: тарифы, фичи и демо. Тёмный технологичный интерфейс с анимацией.",from:"от",price:"250 USDT"},
+      {tag:"Booking",h:"Сайт с записью",p:"Запись прямо с сайта: барбершоп, спа, клиника. Календарь, подтверждение и напоминания.",from:"от",price:"200 USDT"},
+      {tag:"Портфолио",h:"Сайт-портфолио",p:"Витрина работ с анимацией и 3D-сценами — чтобы проект запоминался с первого экрана.",from:"от",price:"180 USDT"}
+    ],
+    more:"Обсудить",
+    lab:[
+      {fn:"lumora.spec.md",h:"Lumora — студия в одном файле",code:"<span class='c'># воссоздать как один index.html</span>\nсобрать сайт студии <span class='k'>Lumora</span>:\n  · жидкое раскрытие фото курсором\n  · плавный скролл Lenis\n  · пружинный движок на rAF, <span class='k'>без фреймворка</span>",p:"Полная техническая спека, чтобы пересобрать портфолио в одном HTML-файле — все цвета, шрифты, таймеры и анимации зафиксированы.",tags:["один файл","lenis","spring"]},
+      {fn:"ascii-hero.tsx",h:"ASCII-герой",code:"<span class='c'>// shadcn + tailwind + ts</span>\nimport <span class='k'>HeroAsciiOne</span>\nфон: ascii-поле <span class='k'>UnicornStudio</span>\nпалитра: чёрно-белая, иконки lucide",p:"Спека интеграции героя с динамической ASCII-анимацией на стеке shadcn/ui + Tailwind.",tags:["react","shadcn","ascii"]},
+      {fn:"minimal-hero.tsx",h:"Минималистичный герой",code:"<span class='c'>// framer-motion</span>\n<span class='k'>&lt;MinimalistHero</span>\n  заголовок · ссылки · фото\n  icons={lucide} <span class='k'>/&gt;</span>",p:"Чистый герой на пропсах с входной анимацией framer-motion — готов вставить в любой TS-проект.",tags:["framer","props","чисто"]},
+      {fn:"spline-hero.tsx",h:"3D-герой на Spline",code:"<span class='c'># 3D-фон</span>\nimport <span class='k'>Spline</span>\nсцена: react-spline\nfallback: unsplash + lucide",p:"Спека героя с интерактивной 3D-сценой Spline за минималистичным контентом.",tags:["3d","spline","react"]}
+    ]
+  }
+};
+
+/* projects: cat index maps to filters (1 studio,2 local,3 fintech,4 template) */
+const PROJECTS = [
+  {key:"kairo",cat:3,feat:true,yr:"2025",live:false,href:"../My-Page/cases.html",
+   en:{h:"KAIRO",t:"Agentic DeFi platform — a dark, tech fintech interface across 5 pages. Smooth motion, clear structure, looks pricier than its budget.",tags:["Fintech","Next.js","5 pages","Flagship"]},
+   ru:{h:"KAIRO",t:"Agentic DeFi-платформа — тёмный технологичный финтех-интерфейс на 5 страниц. Плавная анимация, ясная структура, выглядит дороже бюджета.",tags:["Финтех","Next.js","5 страниц","Флагман"]},
+   c1:"#0b0f14",c2:"#1b6cff",motif:"kairo"},
+  {key:"lumora",cat:1,yr:"2025",live:true,href:DIR+"Lumora-ASCII/index.html",
+   en:{h:"Lumora",t:"Design & engineering studio with a live ASCII hero field and full-screen intro. Pure dark, pure type.",tags:["Studio","ASCII","Single-file"]},
+   ru:{h:"Lumora",t:"Студия дизайна и инженерии с живым ASCII-полем в герое и полноэкранным интро. Чистый дарк, чистый шрифт.",tags:["Студия","ASCII","Один файл"]},
+   c1:"#0a0a0a",c2:"#e8e8e8",motif:"ascii"},
+  {key:"meridian",cat:1,yr:"2025",live:true,href:DIR+"lumora:meredian -- макеты/meridian/index.html",
+   en:{h:"Meridian",t:"A sister studio identity — light surfaces, burnt-orange accent, liquid cursor reveal and spring motion.",tags:["Studio","Light","Motion"]},
+   ru:{h:"Meridian",t:"Идентика студии-сестры — светлые поверхности, жжёно-оранжевый акцент, жидкое раскрытие и пружинная анимация.",tags:["Студия","Светлая","Моушн"]},
+   c1:"#f1f0ee",c2:"#b15f2c",motif:"liquid"},
+  {key:"halo",cat:1,yr:"2025",live:true,href:DIR+"HALO -- макеты (фотостудия)/index.html",
+   en:{h:"HALO",t:"Photography studio — gallery-grade layout where the work leads and the chrome disappears.",tags:["Photography","Gallery","Editorial"]},
+   ru:{h:"HALO",t:"Фотостудия — галерейная вёрстка, где работы ведут, а интерфейс растворяется.",tags:["Фото","Галерея","Editorial"]},
+   c1:"#0d0d0d",c2:"#d8c8b0",motif:"aperture"},
+  {key:"cadence",cat:1,yr:"2025",live:true,href:DIR+"cadence -- макет/index.html",
+   en:{h:"Cadence",t:"A rhythm-driven brand landing — bold type, measured spacing, motion timed to a beat.",tags:["Brand","Landing","Rhythm"]},
+   ru:{h:"Cadence",t:"Бренд-лендинг на ритме — крупный шрифт, выверенные отступы, движение в такт.",tags:["Бренд","Лендинг","Ритм"]},
+   c1:"#101012",c2:"#9b8cff",motif:"wave"},
+  {key:"afit",cat:2,yr:"2024",live:true,href:MS+"a-fit/index.html",
+   en:{h:"A-FIT",t:"Health & fitness club — fast, responsive, multi-page. Classes, directions and contacts, booking from a phone.",tags:["Fitness","Multi-page","Booking"]},
+   ru:{h:"A-FIT",t:"Клуб здоровья и фитнеса — быстрый адаптивный многостраничник. Направления и контакты, запись с телефона.",tags:["Фитнес","Многостр.","Запись"]},
+   c1:"#0f1311",c2:"#5fe08a",motif:"pulse"},
+  {key:"gran",cat:2,yr:"2024",live:true,href:MS+"gran/index.html",
+   en:{h:"Грань",t:"Barbershop with online booking and a simple admin panel — works without a single bug.",tags:["Barbershop","Booking","Admin"]},
+   ru:{h:"Грань",t:"Барбершоп с онлайн-записью и простой админкой — работает без единого бага.",tags:["Барбер","Запись","Админка"]},
+   c1:"#0c0c0d",c2:"#c9a35b",motif:"blade"},
+  {key:"teplyy",cat:2,yr:"2024",live:true,href:MS+"teplyy-ugol/index.html",
+   en:{h:"Тёплый угол",t:"A cozy downtown coffee shop — warm, fast, made to bring in walk-ins from day one.",tags:["Coffee","Local","Warm"]},
+   ru:{h:"Тёплый угол",t:"Уютная кофейня в центре — тёплая, быстрая, чтобы приводить гостей с первого дня.",tags:["Кофейня","Локал","Тепло"]},
+   c1:"#140f0a",c2:"#d98a3d",motif:"steam"},
+  {key:"spa",cat:2,yr:"2024",live:true,href:MS+"spa-gold/index.html",
+   en:{h:"Спа Голд",t:"A spa of quiet luxury — looks expensive, loads instantly, sets the exact mood the client wanted.",tags:["Spa","Luxury","Quiet"]},
+   ru:{h:"Спа Голд",t:"Спа тихой роскоши — выглядит дорого, грузится мгновенно, ровно та атмосфера, что хотел клиент.",tags:["Спа","Люкс","Тишина"]},
+   c1:"#100d12",c2:"#c8a96b",motif:"gold"},
+  {key:"uxlab",cat:1,yr:"2025",live:true,href:"../musor/ux-code-lab/index.html",
+   en:{h:"UX Code Lab",t:"My playground — prompts paired with live demos. Where the spec-to-site method gets tested.",tags:["Lab","Prompts","Demos"]},
+   ru:{h:"UX Code Lab",t:"Моя лаборатория — промты в паре с живыми демо. Здесь обкатывается метод «спека → сайт».",tags:["Лаб","Промты","Демо"]},
+   c1:"#0b0b0d",c2:"#e3a93c",motif:"grid"},
+  {key:"tradepro",cat:4,yr:"2025",live:false,href:"#",
+   en:{h:"TradePro",t:"A config-driven home-services template — work-order motif, quote calculator, before/after slider. Built on Next.js.",tags:["Template","Next.js","Home services"]},
+   ru:{h:"TradePro",t:"Конфиг-управляемый шаблон для домашних услуг — мотив наряд-заказа, калькулятор сметы, слайдер до/после. На Next.js.",tags:["Шаблон","Next.js","Услуги"]},
+   c1:"#0c0f14",c2:"#ff7a2f",motif:"order"},
+  {key:"arw",cat:3,yr:"2025",live:false,href:"#",
+   en:{h:"Autonomous Revenue Workforce",t:"Concept & landing for an AI sales platform — AI SDR + account manager in one product. Idea to interface.",tags:["AI","Concept","SaaS"]},
+   ru:{h:"Autonomous Revenue Workforce",t:"Концепт и лендинг AI-платформы продаж — AI SDR + аккаунт-менеджер в одном продукте. От идеи до интерфейса.",tags:["AI","Концепт","SaaS"]},
+   c1:"#0a0c12",c2:"#7c5bff",motif:"nodes"}
+];
+
+/* ============================================================ MOTIF SVGs (the only color on the page) */
+function motif(p){
+  const a=p.c2, key=p.motif;
+  const bg=`<rect width='100%' height='100%' fill='${p.c1}'/>`;
+  const grid=`<g stroke='${a}' stroke-opacity='.08'>${Array.from({length:9},(_,i)=>`<line x1='${i*60}' y1='0' x2='${i*60}' y2='400'/>`).join("")}${Array.from({length:7},(_,i)=>`<line x1='0' y1='${i*60}' x2='520' y2='${i*60}'/>`).join("")}</g>`;
+  const M={
+    kairo:`${grid}<g fill='none' stroke='${a}' stroke-width='1.4'><circle cx='260' cy='190' r='70' stroke-opacity='.5'/><circle cx='260' cy='190' r='110' stroke-opacity='.25'/><path d='M150 240 L230 170 L290 210 L380 130' stroke-width='2'/><circle cx='150' cy='240' r='4' fill='${a}'/><circle cx='380' cy='130' r='5' fill='${a}'/></g>`,
+    ascii:`<g text-anchor='middle' font-family='monospace'><text x='260' y='150' font-size='30' fill='${a}' fill-opacity='.85' letter-spacing='8'>LUMORA</text><text x='260' y='196' font-size='15' fill='${a}' fill-opacity='.35'>:: ▓▓ ▒▒ ░░ ██ ░░ ▒▒ ▓▓ ::</text><text x='260' y='226' font-size='15' fill='${a}' fill-opacity='.22'>░░ ▒▒ ▓▓ ██ ▓▓ ▒▒ ░░ :: ::</text><text x='260' y='256' font-size='15' fill='${a}' fill-opacity='.15'>:: :: ░░ ▒▒ ░░ :: :: :: ::</text></g>`,
+    liquid:`<defs><radialGradient id='lg${p.key}'><stop offset='0%' stop-color='${a}' stop-opacity='.6'/><stop offset='100%' stop-color='${a}' stop-opacity='0'/></radialGradient></defs><circle cx='200' cy='200' r='150' fill='url(#lg${p.key})'/><circle cx='320' cy='150' r='90' fill='url(#lg${p.key})'/><text x='260' y='225' text-anchor='middle' font-family='Bricolage Grotesque,sans-serif' font-size='40' font-weight='600' fill='${p.c1==='#f1f0ee'?'#0a0a0a':a}'>Meridian</text>`,
+    aperture:`<g transform='translate(260,190)' fill='none' stroke='${a}' stroke-width='1.6' stroke-opacity='.6'>${Array.from({length:6},(_,i)=>{const r=i*60*Math.PI/180;return `<line x1='0' y1='0' x2='${Math.cos(r)*95}' y2='${Math.sin(r)*95}'/>`}).join("")}<circle r='95'/><circle r='40' stroke-opacity='1'/></g>`,
+    wave:`<g fill='none' stroke='${a}' stroke-width='2'>${Array.from({length:5},(_,i)=>`<path d='M0 ${110+i*40} Q130 ${60+i*40} 260 ${110+i*40} T520 ${110+i*40}' stroke-opacity='${.5-i*.08}'/>`).join("")}</g>`,
+    pulse:`<path d='M0 200 H160 L185 130 L215 270 L245 170 L270 200 H520' fill='none' stroke='${a}' stroke-width='2.4'/><circle cx='270' cy='200' r='5' fill='${a}'/>`,
+    blade:`<g stroke='${a}' stroke-width='2' fill='none' stroke-opacity='.7'><circle cx='180' cy='150' r='30'/><circle cx='180' cy='250' r='30'/><path d='M205 165 L360 240 M205 235 L360 160'/></g>`,
+    steam:`<g fill='none' stroke='${a}' stroke-width='2' stroke-opacity='.6'><path d='M230 120 q-18 -28 0 -56 q18 -28 0 -56'/><path d='M270 120 q-18 -28 0 -56 q18 -28 0 -56'/></g><rect x='195' y='150' width='120' height='90' rx='10' fill='none' stroke='${a}' stroke-width='2.4'/><path d='M315 170 q40 0 40 30 t-40 30' fill='none' stroke='${a}' stroke-width='2.4'/>`,
+    gold:`<defs><linearGradient id='gd${p.key}' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${a}' stop-opacity='.7'/><stop offset='100%' stop-color='${a}' stop-opacity='.15'/></linearGradient></defs><circle cx='260' cy='190' r='95' fill='none' stroke='url(#gd${p.key})' stroke-width='3'/><circle cx='260' cy='190' r='55' fill='none' stroke='${a}' stroke-width='1' stroke-opacity='.4'/>`,
+    grid:`${grid}<text x='260' y='190' text-anchor='middle' font-family='monospace' font-size='22' fill='${a}' fill-opacity='.85'>&gt; prompt</text><text x='260' y='226' text-anchor='middle' font-family='monospace' font-size='22' fill='${a}' fill-opacity='.45'>→ render<tspan fill='${a}'>_</tspan></text>`,
+    order:`<g fill='none' stroke='${a}' stroke-width='1.6' stroke-opacity='.7'><rect x='150' y='110' width='220' height='170' rx='8'/><line x1='175' y1='150' x2='345' y2='150'/><line x1='175' y1='185' x2='320' y2='185'/><line x1='175' y1='220' x2='300' y2='220'/><circle cx='340' cy='245' r='16' stroke-opacity='1'/><path d='M333 245 l5 5 l9 -11' stroke-width='2.2'/></g>`,
+    nodes:`<g stroke='${a}' stroke-width='1.4' stroke-opacity='.4'><line x1='140' y1='130' x2='260' y2='200'/><line x1='260' y1='200' x2='380' y2='140'/><line x1='260' y1='200' x2='300' y2='290'/><line x1='260' y1='200' x2='170' y2='270'/></g><g fill='${a}'><circle cx='140' cy='130' r='6'/><circle cx='380' cy='140' r='6'/><circle cx='300' cy='290' r='6'/><circle cx='170' cy='270' r='6'/><circle cx='260' cy='200' r='9'/></g>`
+  };
+  return `<svg viewBox='0 0 520 400' preserveAspectRatio='xMidYMid slice' xmlns='http://www.w3.org/2000/svg'>${bg}${M[key]||grid}</svg>`;
+}
+
+/* ============================================================ RENDER */
+let LANG = (localStorage.getItem('lang')==='ru')?'ru':'en';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let activeFilter=0;
+
+function renderStatic(){
+  const d=DATA[LANG];
+  $$('[data-i18n]').forEach(e=>{const k=e.getAttribute('data-i18n');if(d[k]!=null)e.textContent=d[k];});
+  $$('[data-i18n-html]').forEach(e=>{const k=e.getAttribute('data-i18n-html');if(d[k]!=null)e.innerHTML=d[k];});
+  document.documentElement.lang=LANG;
+  $$('.lang button').forEach(b=>b.classList.toggle('active',b.dataset.lang===LANG));
+  // hero h1 inner italics
+  $('[data-i18n="h1b"]')&&($('[data-i18n="h1b"]').innerHTML=d.h1b);
+  $('[data-i18n="h1a"]')&&($('[data-i18n="h1a"]').innerHTML=d.h1a);
+  $('[data-i18n="h1c"]')&&($('[data-i18n="h1c"]').innerHTML=d.h1c);
+  if(window.__typed){const el=$('#heroSpec');if(el)el.innerHTML=fmtSpec(specText());}
+}
+
+function renderMarquee(){
+  const items=DATA[LANG].marquee;
+  const one=items.map(t=>`<span>${t}</span>`).join("");
+  $('#mqTrack').innerHTML=one+one;
+}
+
+function renderFilters(){
+  const f=DATA[LANG].filters;
+  $('#filters').innerHTML=f.map((t,i)=>`<button data-f="${i}" aria-pressed="${i===activeFilter}">${t}</button>`).join("");
+  $('#workCount').textContent=PROJECTS.length+(LANG==='ru'?' проектов':' projects');
+  $$('#filters button').forEach(b=>b.onclick=()=>{activeFilter=+b.dataset.f;renderFilters();filterWork();});
+}
+function filterWork(){
+  $$('#workGrid .card').forEach(c=>{
+    const cat=+c.dataset.cat;
+    c.classList.toggle('hide',!(activeFilter===0||cat===activeFilter));
+  });
+}
+function renderWork(){
+  $('#workGrid').innerHTML=PROJECTS.map(p=>{
+    const t=p[LANG];
+    const live=p.live?`<div class="live"><i></i>live demo</div>`:"";
+    const target=p.href!=="#"?`href="${ENC(p.href)}" target="_blank" rel="noopener"`:`href="#cta"`;
+    return `<a class="card ${p.feat?'feat':''}" data-cat="${p.cat}" ${target} data-magnetic style="--c1:${p.c1}">
+      <div class="thumb">${motif(p)}${live}
+        <div class="open"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M7 17 L17 7 M9 7 h8 v8"/></svg></div>
+      </div>
+      <div class="meta">
+        <div class="top"><h3>${t.h}</h3><span class="yr">${p.yr}</span></div>
+        <p>${t.t}</p>
+        <div class="tags">${t.tags.map(x=>`<i>${x}</i>`).join("")}</div>
+      </div></a>`;
+  }).join("");
+  filterWork();
+  bindMagnetic();
+}
+function renderLab(){
+  $('#labGrid').innerHTML=DATA[LANG].lab.map(s=>`
+    <div class="spec rv">
+      <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="fn">${s.fn}</span></div>
+      <div class="body">
+        <h3>${s.h}</h3>
+        <div class="code">${s.code}</div>
+        <p>${s.p}</p>
+        <div class="tags">${s.tags.map(x=>`<i>${x}</i>`).join("")}</div>
+      </div>
+    </div>`).join("");
+  observeRv();
+}
+function renderServices(){
+  $('#svcList').innerHTML=DATA[LANG].services.map((s,i)=>`
+    <div class="row rv">
+      <div class="n">0${i+1}</div>
+      <h3>${s.h}</h3>
+      <p>${s.p}</p>
+      <div class="ar">↗</div>
+    </div>`).join("");
+  observeRv();
+}
+function renderProcess(){
+  $('#procGrid').innerHTML=DATA[LANG].process.map(s=>`
+    <div class="step">
+      <div class="n">${s.s}</div>
+      <h3>${s.t}</h3>
+      <p>${s.d}</p>
+      <div class="state">${s.st}</div>
+    </div>`).join("");
+}
+function renderReviews(){
+  const r=DATA[LANG].reviews;
+  $('#revTrack').innerHTML=[...r,...r].map(x=>`
+    <div class="rev">
+      <div class="star">★★★★★</div>
+      <p class="qt">“${x.t}”</p>
+      <div class="by"><span class="av">${x.in}</span><span class="nm">${x.a}</span></div>
+    </div>`).join("");
+}
+function renderCatalog(){
+  $('#catGrid').innerHTML=DATA[LANG].catalog.map(c=>`
+    <div class="price rv">
+      <span class="tag">${c.tag}</span>
+      <h3>${c.h}</h3>
+      <p>${c.p}</p>
+      <div class="from">${c.from} <b>${c.price}</b></div>
+      <a class="more" href="#cta">${DATA[LANG].more} →</a>
+    </div>`).join("");
+  observeRv();
+}
+function renderAll(){
+  renderStatic();renderMarquee();renderFilters();renderWork();
+  renderLab();renderServices();renderProcess();renderReviews();renderCatalog();
+}
+
+/* ============================================================ LANG SWITCH */
+$$('.lang button').forEach(b=>b.onclick=()=>{
+  LANG=b.dataset.lang;localStorage.setItem('lang',LANG);renderAll();
+});
+
+/* ============================================================ REVEAL OBSERVER */
+let rvObs;
+function observeRv(){
+  if(!rvObs){rvObs=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rvObs.unobserve(e.target);}});},{threshold:.14});}
+  $$('.rv:not(.in)').forEach(e=>rvObs.observe(e));
+}
+
+/* ============================================================ HERO TYPING + REVEAL */
+function specText(){
+  return LANG==='ru'
+    ? `> собери сайт, который запускается за 7 дней, выглядит дорого и грузится <1с`
+    : `> build a site that ships in 7 days, looks expensive & loads in <1s`;
+}
+function fmtSpec(s){
+  return s.replace(/^&gt;|^>/,'<span class="pr">&gt;</span>')
+          .replace(/(7 days|7 дней|<1с|<1s|expensive|дорого)/g,'<span class="cw">$1</span>')
+          +'<span class="caret"></span>';
+}
+function heroSpec(){
+  const el=$('#heroSpec'); if(!el) return;
+  const txt=specText(); let i=0; el.innerHTML='';
+  function tick(){
+    if(i<=txt.length){ el.innerHTML=fmtSpec(txt.slice(0,i)); i++; setTimeout(tick,22+Math.random()*30); }
+    else { el.innerHTML=fmtSpec(txt); $('#heroH1').classList.add('go'); window.__typed=true; }
+  }
+  tick();
+}
+
+/* ============================================================ LOADER */
+(function(){
+  const num=$('#ldNum'),bar=$('#ldBar'),cap=$('#ldCap'),loader=$('#loader');
+  const caps=['booting','reading spec','compiling','optimizing','ready'];
+  let p=0;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  document.body.classList.add('lock');
+  function step(){
+    p+=reduce?40:(Math.random()*9+3);
+    if(p>=100)p=100;
+    num.textContent=String(Math.floor(p)).padStart(3,'0');
+    bar.style.right=(100-p)+'%';
+    cap.textContent=caps[Math.min(caps.length-1,Math.floor(p/22))];
+    if(p<100){setTimeout(step,reduce?40:90);}
+    else{
+      setTimeout(()=>{
+        loader.classList.add('done');document.body.classList.remove('lock');
+        heroSpec();observeRv();
+      },360);
+    }
+  }
+  setTimeout(step,300);
+})();
+
+/* ============================================================ CLOCK */
+function tickClock(){
+  const t=new Date();
+  const hh=String(t.getHours()).padStart(2,'0'),mm=String(t.getMinutes()).padStart(2,'0'),ss=String(t.getSeconds()).padStart(2,'0');
+  const hc=$('#hdrClock'),lc=$('#ldClock');
+  if(hc)hc.textContent=`${hh}:${mm} LDN`;
+  if(lc)lc.textContent=`${hh}:${mm}:${ss}`;
+}
+setInterval(tickClock,1000);tickClock();
+
+/* ============================================================ HEADER + SCROLL FRAME */
+const hdr=$('#hdr');
+addEventListener('scroll',()=>{
+  hdr.classList.toggle('scrolled',scrollY>40);
+  const max=document.body.scrollHeight-innerHeight;
+  const pct=max>0?Math.round(scrollY/max*100):0;
+  const fs=$('#fscroll'); if(fs)fs.textContent=String(pct).padStart(3,'0')+'%';
+},{passive:true});
+
+/* ============================================================ MOBILE MENU */
+const menu=$('#menu'),burger=$('#burger');
+burger.onclick=()=>{menu.classList.toggle('open');document.body.classList.toggle('lock');};
+$$('#menu a').forEach(a=>a.onclick=()=>{menu.classList.remove('open');document.body.classList.remove('lock');});
+
+/* ============================================================ CUSTOM CURSOR + MAGNETIC */
+const cur=$('.cur'),dot=$('.cur-dot');
+let cx=innerWidth/2,cy=innerHeight/2,tx=cx,ty=cy;
+addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;dot.style.transform=`translate(${tx}px,${ty}px) translate(-50%,-50%)`;});
+(function loop(){cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;cur.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;requestAnimationFrame(loop);})();
+function bindMagnetic(){
+  $$('[data-magnetic]').forEach(el=>{
+    if(el._mag)return;el._mag=true;
+    el.addEventListener('mouseenter',()=>cur.classList.add('grow'));
+    el.addEventListener('mouseleave',()=>{cur.classList.remove('grow');el.style.transform='';});
+    el.addEventListener('mousemove',e=>{
+      const r=el.getBoundingClientRect();
+      const mx=e.clientX-(r.left+r.width/2),my=e.clientY-(r.top+r.height/2);
+      el.style.transform=`translate(${mx*.18}px,${my*.18}px)`;
+    });
+  });
+  $$('h1,h2,.hero-h1').forEach(el=>{
+    if(el._t)return;el._t=true;
+    el.addEventListener('mouseenter',()=>cur.classList.add('text'));
+    el.addEventListener('mouseleave',()=>cur.classList.remove('text'));
+  });
+}
+
+/* ============================================================ HERO CANVAS — drifting glyph field */
+(function(){
+  const c=$('#heroCanvas'); if(!c)return;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const ctx=c.getContext('2d');
+  let w,h,DPR=Math.min(devicePixelRatio||1,2),cols=[],fontSize=15;
+  const glyphs="01░▒▓<>/{}=+*·:".split("");
+  const mouse={x:-999,y:-999};
+  function size(){
+    w=c.width=innerWidth*DPR;h=c.height=c.offsetHeight*DPR;
+    c.style.width=innerWidth+'px';
+    const n=Math.floor(innerWidth/26);
+    cols=Array.from({length:n},(_,i)=>({x:i*26+13,y:Math.random()*c.offsetHeight,sp:.25+Math.random()*.7,
+      ch:glyphs[Math.floor(Math.random()*glyphs.length)],a:.06+Math.random()*.18}));
+  }
+  size();addEventListener('resize',size);
+  addEventListener('mousemove',e=>{const r=c.getBoundingClientRect();mouse.x=e.clientX-r.left;mouse.y=e.clientY-r.top;});
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    ctx.font=`${fontSize*DPR}px "JetBrains Mono",monospace`;
+    cols.forEach(col=>{
+      col.y+=col.sp; if(col.y>c.offsetHeight+20){col.y=-20;col.x=col.x;col.ch=glyphs[Math.floor(Math.random()*glyphs.length)];}
+      const dx=col.x-mouse.x,dy=col.y-mouse.y,d=Math.hypot(dx,dy);
+      let a=col.a, fill='242,239,233';
+      if(d<120){a=Math.min(.9,col.a+(1-d/120)*.8);fill='227,169,60';}
+      ctx.fillStyle=`rgba(${fill},${a})`;
+      ctx.fillText(col.ch,col.x*DPR,col.y*DPR);
+    });
+    if(!reduce)requestAnimationFrame(draw);
+  }
+  if(reduce){c.style.opacity=.18;draw();}else draw();
+})();
+
+/* ============================================================ REVIEW DRIFT */
+(function(){
+  const tr=$('#revTrack'); if(!tr)return;
+  let x=0,paused=false;
+  tr.parentElement.addEventListener('mouseenter',()=>paused=true);
+  tr.parentElement.addEventListener('mouseleave',()=>paused=false);
+  function loop(){
+    if(!paused){x-=.4;const half=tr.scrollWidth/2;if(-x>=half)x=0;tr.style.transform=`translateX(${x}px)`;}
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ============================================================ COUNT-UP STATS */
+function countUp(){
+  $$('[data-count]').forEach(el=>{
+    if(el._done)return;
+    const r=el.getBoundingClientRect();
+    if(r.top<innerHeight&&r.bottom>0){
+      el._done=true;const tgt=+el.dataset.count,suf=el.dataset.suffix||'';let v=0;
+      const inc=tgt/40;
+      (function run(){v+=inc;if(v>=tgt){el.textContent=tgt+suf;}else{el.textContent=Math.floor(v)+suf;requestAnimationFrame(run);}})();
+    }
+  });
+}
+addEventListener('scroll',countUp,{passive:true});
+
+/* ============================================================ BOOT */
+renderAll();
+bindMagnetic();
+setTimeout(()=>{countUp();observeRv();},400);
+const fc=$('#fcoord'); // small life: random-ish coord stays static (London)
+</script>
+</body>
+</html>
