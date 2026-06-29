@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>404 — not yet compiled · Vlad</title>
+<meta name="description" content="This build isn’t deployed yet — it’s still compiling." />
+<meta name="theme-color" content="#0A0A0B" />
+<meta name="robots" content="noindex" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0A0A0B;--surface:#131316;--ink:#F2EFE9;--ink-2:#CFCBC2;--muted:#86837C;--faint:#5A5853;
+  --line:rgba(242,239,233,.10);--line-2:rgba(242,239,233,.06);--live:#E3A93C;--live-soft:rgba(227,169,60,.14);
+  --disp:"Bricolage Grotesque",system-ui,sans-serif;--body:"Inter",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace;
+  --pad:clamp(20px,5vw,88px);--ease:cubic-bezier(.22,1,.36,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);min-height:100svh;
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
+::selection{background:var(--live);color:#0A0A0B}
+:focus-visible{outline:2px solid var(--live);outline-offset:3px}
+body::before{content:"";position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 0%,transparent 55%,rgba(0,0,0,.55) 100%);mix-blend-mode:multiply}
+.grain{position:fixed;inset:-50%;z-index:2;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain 6s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}25%{transform:translate(-6%,4%)}50%{transform:translate(4%,-6%)}75%{transform:translate(-4%,2%)}100%{transform:translate(0,0)}}
+#bg{position:fixed;inset:0;z-index:0;opacity:.5}
+.frame{position:fixed;z-index:30;pointer-events:none;font-family:var(--mono);font-size:10px;
+  letter-spacing:.2em;color:var(--faint);text-transform:uppercase}
+.frame.bl{bottom:16px;left:var(--pad)}.frame.br{bottom:16px;right:var(--pad)}
+@media(max-width:760px){.frame{display:none}}
+.cur,.cur-dot{position:fixed;top:0;left:0;z-index:9998;pointer-events:none;border-radius:50%;mix-blend-mode:difference;will-change:transform}
+.cur{width:34px;height:34px;border:1px solid rgba(242,239,233,.6);transform:translate(-50%,-50%);transition:width .28s var(--ease),height .28s var(--ease),background .28s}
+.cur-dot{width:5px;height:5px;background:var(--ink);transform:translate(-50%,-50%)}
+.cur.grow{width:62px;height:62px;background:rgba(242,239,233,.12);border-color:transparent}
+@media(hover:none),(pointer:coarse){.cur,.cur-dot{display:none}}
+
+header{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:18px var(--pad)}
+.brand{display:flex;align-items:baseline;gap:.55em;font-family:var(--disp);font-weight:600;font-size:18px;letter-spacing:-.02em}
+.brand .mk{font-size:13px;font-family:var(--mono);color:var(--live);font-weight:600}
+.brand .sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;font-weight:400}
+.lang{display:flex;font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{padding:5px 10px;color:var(--muted);transition:.25s}
+.lang button.active{color:var(--bg);background:var(--ink)}
+
+main{position:relative;z-index:10;flex:1;display:flex;flex-direction:column;justify-content:center;
+  max-width:1100px;width:100%;margin:0 auto;padding:clamp(24px,6vh,70px) var(--pad)}
+.status{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--live);
+  display:inline-flex;align-items:center;gap:.7em;margin-bottom:26px}
+.status i{width:7px;height:7px;border-radius:50%;background:var(--live);box-shadow:0 0 0 0 var(--live);animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--live-soft)}70%{box-shadow:0 0 0 9px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.big{font-family:var(--disp);font-weight:500;font-size:clamp(5.5rem,26vw,20rem);line-height:.82;letter-spacing:-.05em;
+  display:flex;align-items:center;gap:.02em}
+.big em{font-style:normal;color:var(--faint);-webkit-text-stroke:1.5px var(--ink-2);-webkit-text-fill-color:transparent}
+.big .z{position:relative;color:var(--faint);-webkit-text-stroke:1.5px var(--live);-webkit-text-fill-color:transparent}
+.proj{font-family:var(--disp);font-weight:500;font-size:clamp(1.6rem,4.5vw,3.4rem);letter-spacing:-.03em;margin-top:18px}
+.proj .pre{font-family:var(--mono);font-size:.42em;color:var(--live);letter-spacing:.05em;vertical-align:middle;margin-right:.5em}
+.lead{color:var(--muted);font-size:clamp(15px,1.7vw,18px);line-height:1.6;max-width:48ch;margin-top:18px}
+
+.term{margin-top:36px;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;max-width:640px}
+.term .bar{display:flex;align-items:center;gap:8px;padding:11px 15px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;color:var(--muted)}
+.term .bar .dots{display:flex;gap:6px}.term .bar .dots i{width:9px;height:9px;border-radius:50%;background:#26262b}
+.term .bar .dots i:first-child{background:var(--live)}
+.term .bar .fn{margin-left:auto;color:var(--faint)}
+.term .body{padding:18px 16px;font-family:var(--mono);font-size:13px;line-height:1.85;min-height:150px;white-space:pre-wrap}
+.term .body .k{color:var(--live)}.term .body .c{color:var(--faint)}.term .body .ok{color:#7fdca0}
+.caret{display:inline-block;width:8px;height:1.05em;background:var(--live);transform:translateY(2px);animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+.acts{display:flex;gap:14px;flex-wrap:wrap;margin-top:38px}
+.btn{font-family:var(--mono);font-size:13px;letter-spacing:.02em;padding:14px 22px;border-radius:999px;display:inline-flex;align-items:center;gap:10px;transition:.35s var(--ease)}
+.btn-fill{background:var(--ink);color:var(--bg)}.btn-fill:hover{background:var(--live);gap:14px}
+.btn-ghost{border:1px solid var(--line);color:var(--ink-2)}.btn-ghost:hover{border-color:var(--ink);color:var(--ink)}
+
+footer{position:relative;z-index:10;padding:24px var(--pad);border-top:1px solid var(--line);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.04em}
+footer a:hover{color:var(--live)}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.001s!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<canvas id="bg"></canvas>
+<div class="cur"></div><div class="cur-dot"></div>
+<div class="frame bl">BUILT WITH CLAUDE</div>
+<div class="frame br" id="code">HTTP/404</div>
+
+<header>
+  <a href="index.html" class="brand" data-magnetic><span class="mk">[V]</span>Vlad<span class="sub" id="brandSub">/ design engineer</span></a>
+  <div class="lang"><button data-lang="en" class="active">EN</button><button data-lang="ru">RU</button></div>
+</header>
+
+<main>
+  <span class="status"><i></i><span id="statusTxt">Status 404 · not yet compiled</span></span>
+  <h1 class="big" data-magnetic>4<span class="z">0</span>4</h1>
+  <div class="proj"><span class="pre" id="projPre">~/work/</span><span id="projName">Project</span></div>
+  <p class="lead" id="lead"></p>
+
+  <div class="term">
+    <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="fn" id="termFn">deploy.log</span></div>
+    <div class="body" id="termBody"></div>
+  </div>
+
+  <div class="acts">
+    <a href="index.html#work" class="btn btn-fill" data-magnetic id="backBtn">← Back to work</a>
+    <a href="index.html#cta" class="btn btn-ghost" data-magnetic id="ctaBtn">Get in touch</a>
+  </div>
+</main>
+
+<footer>
+  <span id="footL">© 2025 Vlad · this build is queued for deploy</span>
+  <a href="index.html" data-magnetic id="footR">vlad.studio ↑</a>
+</footer>
+
+<script>
+const PROJ = {
+  lumora:{
+    name:"Lumora", pkg:"lumora",
+    en:{lead:"The Lumora studio site exists as a finished build — it just isn’t on a public URL yet. It’s queued for deploy.",
+        log:["<span class='c'># building lumora — design & engineering studio</span>","$ <span class='k'>vercel</span> build ./lumora","→ bundling single-file index.html","→ ascii hero field … <span class='ok'>ok</span>","→ lenis smooth scroll … <span class='ok'>ok</span>","○ deploy <span class='k'>queued</span> — drop a line to get the live link"]},
+    ru:{lead:"Сайт студии Lumora уже собран как готовый билд — просто пока без публичного адреса. Стоит в очереди на деплой.",
+        log:["<span class='c'># сборка lumora — студия дизайна и инженерии</span>","$ <span class='k'>vercel</span> build ./lumora","→ упаковка single-file index.html","→ ascii-поле героя … <span class='ok'>ok</span>","→ плавный скролл lenis … <span class='ok'>ok</span>","○ деплой <span class='k'>в очереди</span> — напиши, пришлю живую ссылку"]}
+  },
+  uxlab:{
+    name:"UX Code Lab", pkg:"ux-code-lab",
+    en:{lead:"My playground where prompts meet live demos. The public build is still being polished — peek behind the curtain soon.",
+        log:["<span class='c'># building ux code lab — prompts + live demos</span>","$ <span class='k'>vercel</span> build ./ux-code-lab","→ indexing prompt library","→ wiring live demo frames … <span class='ok'>ok</span>","→ optimizing assets … <span class='ok'>ok</span>","○ deploy <span class='k'>queued</span> — ask me for early access"]},
+    ru:{lead:"Моя лаборатория, где промты встречаются с живыми демо. Публичный билд ещё шлифуется — скоро покажу.",
+        log:["<span class='c'># сборка ux code lab — промты + живые демо</span>","$ <span class='k'>vercel</span> build ./ux-code-lab","→ индексация библиотеки промтов","→ подключение демо-фреймов … <span class='ok'>ok</span>","→ оптимизация ассетов … <span class='ok'>ok</span>","○ деплой <span class='k'>в очереди</span> — спроси ранний доступ"]}
+  },
+  tradepro:{
+    name:"TradePro", pkg:"tradepro",
+    en:{lead:"A config-driven home-services template on Next.js. The demo deploy is on its way — want a tailored build for your trade?",
+        log:["<span class='c'># building tradepro — home-services template</span>","$ <span class='k'>next</span> build","→ compiling routes (work-order, quote, gallery)","→ static optimization … <span class='ok'>ok</span>","→ before/after slider … <span class='ok'>ok</span>","○ deploy <span class='k'>queued</span> — message me to spin up your version"]},
+    ru:{lead:"Конфиг-управляемый шаблон для домашних услуг на Next.js. Демо-деплой на подходе — нужен билд под твою нишу?",
+        log:["<span class='c'># сборка tradepro — шаблон для домашних услуг</span>","$ <span class='k'>next</span> build","→ компиляция маршрутов (наряд, смета, галерея)","→ статическая оптимизация … <span class='ok'>ok</span>","→ слайдер до/после … <span class='ok'>ok</span>","○ деплой <span class='k'>в очереди</span> — напиши, подниму твою версию"]}
+  }
+};
+const STR = {
+  en:{sub:"/ design engineer",status:"Status 404 · not yet compiled",back:"← Back to work",cta:"Get in touch",
+      footL:"© 2025 Vlad · this build is queued for deploy",footR:"vlad.studio ↑",fallbackLead:"This page isn’t deployed yet — it’s still compiling."},
+  ru:{sub:"/ дизайн-инженер",status:"Статус 404 · ещё не скомпилировано",back:"← К работам",cta:"Написать",
+      footL:"© 2025 Влад · этот билд в очереди на деплой",footR:"vlad.studio ↑",fallbackLead:"Эта страница ещё не задеплоена — идёт компиляция."}
+};
+
+const params=new URLSearchParams(location.search);
+const key=(params.get('p')||'').toLowerCase();
+const data=PROJ[key];
+let LANG=(localStorage.getItem('lang')==='ru')?'ru':'en';
+const $=s=>document.querySelector(s);
+let typer=null;
+
+function render(){
+  const s=STR[LANG];
+  document.documentElement.lang=LANG;
+  $('#brandSub').textContent=s.sub;$('#statusTxt').textContent=s.status;
+  $('#backBtn').textContent=s.back;$('#ctaBtn').textContent=s.cta;
+  $('#footL').textContent=s.footL;$('#footR').textContent=s.footR;
+  document.querySelectorAll('.lang button').forEach(b=>b.classList.toggle('active',b.dataset.lang===LANG));
+  if(data){
+    $('#projName').textContent=data.name;
+    $('#projPre').textContent='~/work/';
+    $('#termFn').textContent=data.pkg+'/deploy.log';
+    $('#lead').textContent=data[LANG].lead;
+    document.title=`404 — ${data.name} not yet compiled · Vlad`;
+    typeLog(data[LANG].log);
+  }else{
+    $('#projName').textContent='Page';
+    $('#lead').textContent=s.fallbackLead;
+    typeLog(["<span class='c'># 404 — route not found</span>","$ <span class='k'>vercel</span> inspect","○ no such build <span class='k'>queued</span>"]);
+  }
+}
+function typeLog(lines){
+  const body=$('#termBody');body.innerHTML='';
+  if(typer)clearTimeout(typer);
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce){body.innerHTML=lines.join("\n")+'<span class="caret"></span>';return;}
+  let li=0;
+  function nextLine(){
+    if(li>=lines.length){body.innerHTML=lines.join("\n")+'<span class="caret"></span>';return;}
+    const done=lines.slice(0,li).join("\n");
+    const cur=lines[li];
+    // strip tags for char-count typing, but render progressively by revealing the plain text then swapping to html
+    const plain=cur.replace(/<[^>]+>/g,'');
+    let ci=0;
+    function typeChar(){
+      if(ci<=plain.length){
+        body.innerHTML=(done?done+"\n":"")+plain.slice(0,ci)+'<span class="caret"></span>';
+        ci++;typer=setTimeout(typeChar,7+Math.random()*13);
+      }else{
+        body.innerHTML=(done?done+"\n":"")+cur;li++;typer=setTimeout(nextLine,120);
+      }
+    }
+    typeChar();
+  }
+  nextLine();
+}
+document.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>{LANG=b.dataset.lang;localStorage.setItem('lang',LANG);render();});
+render();
+
+/* cursor + magnetic */
+const cur=$('.cur'),dot=$('.cur-dot');
+let cx=innerWidth/2,cy=innerHeight/2,tx=cx,ty=cy;
+addEventListener('mousemove',e=>{tx=e.clientX;ty=e.clientY;dot.style.transform=`translate(${tx}px,${ty}px) translate(-50%,-50%)`;});
+(function loop(){cx+=(tx-cx)*.18;cy+=(ty-cy)*.18;cur.style.transform=`translate(${cx}px,${cy}px) translate(-50%,-50%)`;requestAnimationFrame(loop);})();
+document.querySelectorAll('[data-magnetic]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cur.classList.add('grow'));
+  el.addEventListener('mouseleave',()=>{cur.classList.remove('grow');el.style.transform='';});
+  el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();el.style.transform=`translate(${(e.clientX-(r.left+r.width/2))*.15}px,${(e.clientY-(r.top+r.height/2))*.15}px)`;});
+});
+
+/* glyph field */
+(function(){
+  const c=$('#bg'),ctx=c.getContext('2d');
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let DPR=Math.min(devicePixelRatio||1,2),cols=[],fs=15;
+  const g="01░▒▓<>/{}=+*·:".split("");const mouse={x:-999,y:-999};
+  function size(){c.width=innerWidth*DPR;c.height=innerHeight*DPR;c.style.width=innerWidth+'px';c.style.height=innerHeight+'px';
+    const n=Math.floor(innerWidth/26);cols=Array.from({length:n},(_,i)=>({x:i*26+13,y:Math.random()*innerHeight,sp:.25+Math.random()*.7,ch:g[Math.floor(Math.random()*g.length)],a:.05+Math.random()*.16}));}
+  size();addEventListener('resize',size);
+  addEventListener('mousemove',e=>{mouse.x=e.clientX;mouse.y=e.clientY;});
+  function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.font=`${fs*DPR}px "JetBrains Mono",monospace`;
+    cols.forEach(col=>{col.y+=col.sp;if(col.y>innerHeight+20){col.y=-20;col.ch=g[Math.floor(Math.random()*g.length)];}
+      const d=Math.hypot(col.x-mouse.x,col.y-mouse.y);let a=col.a,f='242,239,233';
+      if(d<120){a=Math.min(.9,col.a+(1-d/120)*.8);f='227,169,60';}
+      ctx.fillStyle=`rgba(${f},${a})`;ctx.fillText(col.ch,col.x*DPR,col.y*DPR);});
+    if(!reduce)requestAnimationFrame(draw);}
+  if(reduce){c.style.opacity=.16;draw();}else draw();
+})();
+</script>
+</body>
+</html>

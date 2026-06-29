@@ -731,7 +731,7 @@ const PROJECTS = [
    en:{h:"KAIRO",t:"Agentic DeFi platform — a dark, tech fintech interface across 5 pages. Smooth motion, clear structure, looks pricier than its budget.",tags:["Fintech","Next.js","5 pages","Flagship"]},
    ru:{h:"KAIRO",t:"Agentic DeFi-платформа — тёмный технологичный финтех-интерфейс на 5 страниц. Плавная анимация, ясная структура, выглядит дороже бюджета.",tags:["Финтех","Next.js","5 страниц","Флагман"]},
    c1:"#0b0f14",c2:"#1b6cff",motif:"kairo"},
-  {key:"lumora",cat:1,yr:"2025",live:true,href:DIR+"Lumora-ASCII/index.html",
+  {key:"lumora",cat:1,yr:"2025",live:false,self:true,href:"soon.html?p=lumora",
    en:{h:"Lumora",t:"Design & engineering studio with a live ASCII hero field and full-screen intro. Pure dark, pure type.",tags:["Studio","ASCII","Single-file"]},
    ru:{h:"Lumora",t:"Студия дизайна и инженерии с живым ASCII-полем в герое и полноэкранным интро. Чистый дарк, чистый шрифт.",tags:["Студия","ASCII","Один файл"]},
    c1:"#0a0a0a",c2:"#e8e8e8",motif:"ascii"},
@@ -763,11 +763,11 @@ const PROJECTS = [
    en:{h:"Спа Голд",t:"A spa of quiet luxury — looks expensive, loads instantly, sets the exact mood the client wanted.",tags:["Spa","Luxury","Quiet"]},
    ru:{h:"Спа Голд",t:"Спа тихой роскоши — выглядит дорого, грузится мгновенно, ровно та атмосфера, что хотел клиент.",tags:["Спа","Люкс","Тишина"]},
    c1:"#100d12",c2:"#c8a96b",motif:"gold"},
-  {key:"uxlab",cat:1,yr:"2025",live:true,href:"../musor/ux-code-lab/index.html",
+  {key:"uxlab",cat:1,yr:"2025",live:false,self:true,href:"soon.html?p=uxlab",
    en:{h:"UX Code Lab",t:"My playground — prompts paired with live demos. Where the spec-to-site method gets tested.",tags:["Lab","Prompts","Demos"]},
    ru:{h:"UX Code Lab",t:"Моя лаборатория — промты в паре с живыми демо. Здесь обкатывается метод «спека → сайт».",tags:["Лаб","Промты","Демо"]},
    c1:"#0b0b0d",c2:"#e3a93c",motif:"grid"},
-  {key:"tradepro",cat:4,yr:"2025",live:false,href:"https://github.com/vladbuilds-dev",
+  {key:"tradepro",cat:4,yr:"2025",live:false,self:true,href:"soon.html?p=tradepro",
    en:{h:"TradePro",t:"A config-driven home-services template — work-order motif, quote calculator, before/after slider. Built on Next.js.",tags:["Template","Next.js","Home services"]},
    ru:{h:"TradePro",t:"Конфиг-управляемый шаблон для домашних услуг — мотив наряд-заказа, калькулятор сметы, слайдер до/после. На Next.js.",tags:["Шаблон","Next.js","Услуги"]},
    c1:"#0c0f14",c2:"#ff7a2f",motif:"order"},
@@ -839,7 +839,7 @@ function renderWork(){
   $('#workGrid').innerHTML=PROJECTS.map(p=>{
     const t=p[LANG];
     const live=p.live?`<div class="live"><i></i>live demo</div>`:"";
-    const target=p.href!=="#"?`href="${ENC(p.href)}" target="_blank" rel="noopener"`:`href="#cta"`;
+    const target=p.href==="#"?`href="#cta"`:(p.self?`href="${p.href}"`:`href="${ENC(p.href)}" target="_blank" rel="noopener"`);
     return `<a class="card ${p.feat?'feat':''}" data-cat="${p.cat}" ${target} data-magnetic style="--c1:${p.c1}">
       <div class="thumb">${motif(p)}${live}
         <div class="open"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M7 17 L17 7 M9 7 h8 v8"/></svg></div>
