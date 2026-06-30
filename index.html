@@ -284,7 +284,7 @@ body{overflow-x:hidden}
     </div>
     <div style="border-top:1px solid var(--line)">
       <sc-for list="{{ services }}" as="s" hint-placeholder-count="5">
-        <div data-svcrow data-svcwrap style="display:grid;grid-template-columns:60px 1fr 1.2fr 70px;gap:24px;align-items:center;padding:30px 0;border-bottom:1px solid var(--line);position:relative;transition:padding .4s var(--ease)" style-hover="padding-left:18px;padding-right:18px">
+        <div data-svcrow data-svcwrap data-rv style="display:grid;grid-template-columns:60px 1fr 1.2fr 70px;gap:24px;align-items:center;padding:30px 0;border-bottom:1px solid var(--line);position:relative;transition:opacity .8s var(--ease),transform .8s var(--ease),padding .4s var(--ease)" style-hover="padding-left:18px;padding-right:18px">
           <div style="font-family:var(--mono);font-size:13px;color:var(--faint)">{{ s.n }}</div>
           <h3 style="font-family:var(--disp);font-size:clamp(1.3rem,2.6vw,2rem);font-weight:500">{{ s.h }}</h3>
           <p data-svcp style="color:var(--muted);font-size:14.5px;line-height:1.55">{{ s.p }}</p>
