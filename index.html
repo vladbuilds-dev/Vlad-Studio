@@ -413,7 +413,7 @@ const DATA = {
     navWork:"Work",navAi:"AI Compiler",navServices:"Services",navProcess:"Process",navCatalog:"Catalog",navCta:"Get in touch",
     h1a:"Sites that",h1b1:"look",h1bEm:"expensive",h1c:"& ship fast.",
     heroLead:"I’m Vlad — a design engineer. I write your site like a spec and compile it to ship in days: turnkey landings that load in under a second and look great on a phone.",
-    heroBtn1:"Compile a spec",heroBtn2:"View 12 builds",scrollHint:"scroll",
+    heroBtn1:"Compile a spec",heroBtn2:"View 13 builds",scrollHint:"scroll",
     aiEy:"~/ai-spec-compiler",
     aiTitle:"Describe it. Watch it compile.",
     aiLead:"This is how I actually work — your idea, turned into a precise build spec in seconds. Type a project below and the compiler writes the real blueprint, live.",
@@ -479,7 +479,7 @@ const DATA = {
     navWork:"Работы",navAi:"AI-компилятор",navServices:"Услуги",navProcess:"Процесс",navCatalog:"Каталог",navCta:"Написать",
     h1a:"Сайты, которые",h1b1:"выглядят",h1bEm:"дорого",h1c:"и быстро запускаются.",
     heroLead:"Я Влад — дизайн-инженер. Я пишу твой сайт как спецификацию и компилирую за дни: лендинги под ключ, которые грузятся меньше секунды и отлично смотрятся на телефоне.",
-    heroBtn1:"Скомпилировать спеку",heroBtn2:"Смотреть 12 работ",scrollHint:"листай",
+    heroBtn1:"Скомпилировать спеку",heroBtn2:"Смотреть 13 работ",scrollHint:"листай",
     aiEy:"~/ai-компилятор-спек",
     aiTitle:"Опиши. Смотри, как компилируется.",
     aiLead:"Так я и работаю — твоя идея превращается в точную спеку за секунды. Опиши проект ниже, и компилятор напишет настоящий чертёж вживую.",
@@ -548,6 +548,10 @@ const PROJECTS = [
    en:{h:"KAIRO",t:"Agentic DeFi platform — a dark, tech fintech interface across 5 pages. Smooth motion, clear structure, looks pricier than its budget.",tags:["Fintech","Next.js","5 pages","Flagship"]},
    ru:{h:"KAIRO",t:"Agentic DeFi-платформа — тёмный технологичный финтех-интерфейс на 5 страниц. Плавная анимация, ясная структура, выглядит дороже бюджета.",tags:["Финтех","Next.js","5 страниц","Флагман"]},
    c1:"#0b0f14",c2:"#1b6cff",motif:"kairo"},
+  {key:"heydesk",cat:3,yr:"2026",live:true,href:"https://hey-desk.vercel.app/",
+   en:{h:"HeyDesk",t:"AI receptionist for salons & clinics — replies on WhatsApp, Telegram and Instagram in seconds and books straight into YCLIENTS.",tags:["AI","SaaS","Booking"]},
+   ru:{h:"HeyDesk",t:"AI-администратор для салонов и клиник — отвечает в WhatsApp, Telegram и Instagram за секунды и записывает прямо в YCLIENTS.",tags:["AI","SaaS","Запись"]},
+   c1:"#eaf0fb",c2:"#2563eb",motif:"chat"},
   {key:"lumora",cat:1,yr:"2025",live:false,self:true,href:"#vwork",
    en:{h:"Lumora",t:"Design & engineering studio with a live ASCII hero field and full-screen intro. Pure dark, pure type.",tags:["Studio","ASCII","Single-file"]},
    ru:{h:"Lumora",t:"Студия дизайна и инженерии с живым ASCII-полем в герое и полноэкранным интро. Чистый дарк, чистый шрифт.",tags:["Студия","ASCII","Один файл"]},
@@ -610,7 +614,8 @@ function motif(p){
     gold:`<defs><linearGradient id='gd${p.key}' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='${a}' stop-opacity='.7'/><stop offset='100%' stop-color='${a}' stop-opacity='.15'/></linearGradient></defs><circle cx='260' cy='190' r='95' fill='none' stroke='url(#gd${p.key})' stroke-width='3'/><circle cx='260' cy='190' r='55' fill='none' stroke='${a}' stroke-width='1' stroke-opacity='.4'/>`,
     grid:`${grid}<text x='260' y='190' text-anchor='middle' font-family='monospace' font-size='22' fill='${a}' fill-opacity='.85'>&gt; prompt</text><text x='260' y='226' text-anchor='middle' font-family='monospace' font-size='22' fill='${a}' fill-opacity='.45'>→ render<tspan fill='${a}'>_</tspan></text>`,
     order:`<g fill='none' stroke='${a}' stroke-width='1.6' stroke-opacity='.7'><rect x='150' y='110' width='220' height='170' rx='8'/><line x1='175' y1='150' x2='345' y2='150'/><line x1='175' y1='185' x2='320' y2='185'/><line x1='175' y1='220' x2='300' y2='220'/><circle cx='340' cy='245' r='16' stroke-opacity='1'/><path d='M333 245 l5 5 l9 -11' stroke-width='2.2'/></g>`,
-    nodes:`<g stroke='${a}' stroke-width='1.4' stroke-opacity='.4'><line x1='140' y1='130' x2='260' y2='200'/><line x1='260' y1='200' x2='380' y2='140'/><line x1='260' y1='200' x2='300' y2='290'/><line x1='260' y1='200' x2='170' y2='270'/></g><g fill='${a}'><circle cx='140' cy='130' r='6'/><circle cx='380' cy='140' r='6'/><circle cx='300' cy='290' r='6'/><circle cx='170' cy='270' r='6'/><circle cx='260' cy='200' r='9'/></g>`
+    nodes:`<g stroke='${a}' stroke-width='1.4' stroke-opacity='.4'><line x1='140' y1='130' x2='260' y2='200'/><line x1='260' y1='200' x2='380' y2='140'/><line x1='260' y1='200' x2='300' y2='290'/><line x1='260' y1='200' x2='170' y2='270'/></g><g fill='${a}'><circle cx='140' cy='130' r='6'/><circle cx='380' cy='140' r='6'/><circle cx='300' cy='290' r='6'/><circle cx='170' cy='270' r='6'/><circle cx='260' cy='200' r='9'/></g>`,
+    chat:`<rect x='72' y='92' width='250' height='62' rx='18' fill='${a}' fill-opacity='.1' stroke='${a}' stroke-opacity='.28' stroke-width='1.4'/><g fill='${a}' fill-opacity='.5'><circle cx='100' cy='123' r='4.5'/><circle cx='118' cy='123' r='4.5'/><circle cx='136' cy='123' r='4.5'/></g><rect x='198' y='174' width='250' height='62' rx='18' fill='${a}'/><rect x='222' y='196' width='150' height='7' rx='3.5' fill='#fff' fill-opacity='.92'/><rect x='222' y='213' width='96' height='7' rx='3.5' fill='#fff' fill-opacity='.55'/><rect x='72' y='256' width='198' height='54' rx='16' fill='${a}' fill-opacity='.1' stroke='${a}' stroke-opacity='.28' stroke-width='1.4'/><rect x='94' y='279' width='120' height='7' rx='3.5' fill='${a}' fill-opacity='.45'/><g transform='translate(430,116)'><circle r='9' fill='${a}'/><circle r='9' fill='${a}' fill-opacity='.35'><animate attributeName='r' values='9;18;9' dur='2.4s' repeatCount='indefinite'/><animate attributeName='fill-opacity' values='.35;0;.35' dur='2.4s' repeatCount='indefinite'/></circle></g>`
   };
   return `<svg viewBox='0 0 520 400' preserveAspectRatio='xMidYMid slice' xmlns='http://www.w3.org/2000/svg' style='position:absolute;inset:0;width:100%;height:100%'>${bg}${M[key]||grid}</svg>`;
 }
@@ -912,7 +917,7 @@ class Component extends DCLogic {
       toggleMenu:()=>this.toggleMenu(), closeMenu:()=>this.closeMenu(),
       stats:[
         {value:d.stat4v==='<1s'?'7d':'7д',count:7,suffix:lang==='ru'?'д':'d',label:d.stat1},
-        {value:'12',count:12,suffix:'',label:d.stat2},
+        {value:'13',count:13,suffix:'',label:d.stat2},
         {value:'100%',count:100,suffix:'%',label:d.stat3},
         {value:d.stat4v,count:0,suffix:'',label:d.stat4}
       ],
