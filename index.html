@@ -482,7 +482,7 @@ const DATA = {
     moreLabel:"Discuss",
     stack:["HTML / CSS / JS","Next.js · Tailwind","Canvas · WebGL · GSAP","Claude-native workflow"],
     goodFor:["Local business","Studios & brands","SaaS & fintech","Portfolios"],
-    filters:["All","Studio","Local biz","Fintech / SaaS","Template"],
+    filters:["Top","Studio","Local biz","Fintech / SaaS","Template"],
     marquee:["Turnkey sites","Landing pages","Motion design","Performance","Single-file craft","Bilingual EN/RU","Claude-native","Ships in days"],
     services:[
       {h:"On-brand design",p:"Not a constructor template — a look tailored to your niche, palette and goals."},
@@ -549,7 +549,7 @@ const DATA = {
     moreLabel:"Обсудить",
     stack:["HTML / CSS / JS","Next.js · Tailwind","Canvas · WebGL · GSAP","Claude-native рабочий процесс"],
     goodFor:["Локальный бизнес","Студии и бренды","SaaS и финтех","Портфолио"],
-    filters:["Все","Студии","Локальный бизнес","Финтех / SaaS","Шаблон"],
+    filters:["Топ","Студии","Локальный бизнес","Финтех / SaaS","Шаблон"],
     marquee:["Сайты под ключ","Лендинги","Моушн-дизайн","Скорость","Один файл","EN/RU билингва","Claude-native","Запуск за дни"],
     services:[
       {h:"Дизайн под бренд",p:"Не шаблон из конструктора — облик под твою нишу, палитру и задачи."},
@@ -590,11 +590,11 @@ const DATA = {
 };
 
 const PROJECTS = [
-  {key:"kairo",cat:3,feat:true,yr:"2025",live:true,href:"https://kairo-sixseven.vercel.app/",
+  {key:"kairo",cat:3,feat:true,top:true,yr:"2025",live:true,href:"https://kairo-sixseven.vercel.app/",
    en:{h:"KAIRO",t:"Agentic DeFi platform — a dark, tech fintech interface across 5 pages. Smooth motion, clear structure, looks pricier than its budget.",tags:["Fintech","Next.js","5 pages","Flagship"]},
    ru:{h:"KAIRO",t:"Agentic DeFi-платформа — тёмный технологичный финтех-интерфейс на 5 страниц. Плавная анимация, ясная структура, выглядит дороже бюджета.",tags:["Финтех","Next.js","5 страниц","Флагман"]},
    c1:"#0b0f14",c2:"#1b6cff",motif:"kairo"},
-  {key:"heydesk",cat:3,yr:"2026",live:true,href:"https://hey-desk.vercel.app/",
+  {key:"heydesk",cat:3,top:true,yr:"2026",live:true,href:"https://hey-desk.vercel.app/",
    en:{h:"HeyDesk",t:"AI receptionist for salons & clinics — replies on WhatsApp, Telegram and Instagram in seconds and books straight into YCLIENTS.",tags:["AI","SaaS","Booking"]},
    ru:{h:"HeyDesk",t:"AI-администратор для салонов и клиник — отвечает в WhatsApp, Telegram и Instagram за секунды и записывает прямо в YCLIENTS.",tags:["AI","SaaS","Запись"]},
    c1:"#eaf0fb",c2:"#2563eb",motif:"chat"},
@@ -602,15 +602,15 @@ const PROJECTS = [
    en:{h:"Lumora",t:"Design & engineering studio with a live ASCII hero field and full-screen intro. Pure dark, pure type.",tags:["Studio","ASCII","Single-file"]},
    ru:{h:"Lumora",t:"Студия дизайна и инженерии с живым ASCII-полем в герое и полноэкранным интро. Чистый дарк, чистый шрифт.",tags:["Студия","ASCII","Один файл"]},
    c1:"#0a0a0a",c2:"#e8e8e8",motif:"ascii"},
-  {key:"meridian",cat:1,yr:"2025",live:true,href:"https://meridian-silk-gamma.vercel.app/",
+  {key:"meridian",cat:1,top:true,yr:"2025",live:true,href:"https://meridian-silk-gamma.vercel.app/",
    en:{h:"Meridian",t:"A sister studio identity — light surfaces, burnt-orange accent, liquid cursor reveal and spring motion.",tags:["Studio","Light","Motion"]},
    ru:{h:"Meridian",t:"Идентика студии-сестры — светлые поверхности, жжёно-оранжевый акцент, жидкое раскрытие и пружинная анимация.",tags:["Студия","Светлая","Моушн"]},
    c1:"#f1f0ee",c2:"#b15f2c",motif:"liquid"},
-  {key:"halo",cat:1,yr:"2025",live:true,href:"https://halo-english-maket.vercel.app/",
+  {key:"halo",cat:1,top:true,yr:"2025",live:true,href:"https://halo-english-maket.vercel.app/",
    en:{h:"HALO",t:"Photography studio — gallery-grade layout where the work leads and the chrome disappears.",tags:["Photography","Gallery","Editorial"]},
    ru:{h:"HALO",t:"Фотостудия — галерейная вёрстка, где работы ведут, а интерфейс растворяется.",tags:["Фото","Галерея","Editorial"]},
    c1:"#0d0d0d",c2:"#d8c8b0",motif:"aperture"},
-  {key:"cadence",cat:1,yr:"2025",live:true,href:"https://cadence-three-smoky.vercel.app/",
+  {key:"cadence",cat:1,top:true,yr:"2025",live:true,href:"https://cadence-three-smoky.vercel.app/",
    en:{h:"Cadence",t:"A rhythm-driven brand landing — bold type, measured spacing, motion timed to a beat.",tags:["Brand","Landing","Rhythm"]},
    ru:{h:"Cadence",t:"Бренд-лендинг на ритме — крупный шрифт, выверенные отступы, движение в такт.",tags:["Бренд","Лендинг","Ритм"]},
    c1:"#101012",c2:"#9b8cff",motif:"wave"},
@@ -626,7 +626,7 @@ const PROJECTS = [
    en:{h:"Тёплый угол",t:"A cozy downtown coffee shop — warm, fast, made to bring in walk-ins from day one.",tags:["Coffee","Local","Warm"]},
    ru:{h:"Тёплый угол",t:"Уютная кофейня в центре — тёплая, быстрая, чтобы приводить гостей с первого дня.",tags:["Кофейня","Локал","Тепло"]},
    c1:"#140f0a",c2:"#d98a3d",motif:"steam"},
-  {key:"spa",cat:2,yr:"2024",live:true,href:"https://spa-gold-new.vercel.app/",
+  {key:"spa",cat:2,top:true,yr:"2024",live:true,href:"https://spa-gold-new.vercel.app/",
    en:{h:"Спа Голд",t:"A spa of quiet luxury — looks expensive, loads instantly, sets the exact mood the client wanted.",tags:["Spa","Luxury","Quiet"]},
    ru:{h:"Спа Голд",t:"Спа тихой роскоши — выглядит дорого, грузится мгновенно, ровно та атмосфера, что хотел клиент.",tags:["Спа","Люкс","Тишина"]},
    c1:"#100d12",c2:"#c8a96b",motif:"gold"},
@@ -925,7 +925,7 @@ class Component extends DCLogic {
     const projects = PROJECTS.map(p=>{
       const loc=p[lang];
       const isInternal = p.self;
-      const visible = af===0 || p.cat===af;
+      const visible = af===0 ? !!p.top : p.cat===af;
       return {
         href:p.href,
         target:isInternal?'_self':'_blank',
