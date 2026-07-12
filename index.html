@@ -75,6 +75,9 @@ body{overflow-x:hidden}
   <div data-cursor data-r="cur" style="position:fixed;top:0;left:0;z-index:9998;pointer-events:none;width:34px;height:34px;border:1px solid rgba(242,239,233,.6);border-radius:50%;mix-blend-mode:difference;transform:translate(-50%,-50%);transition:width .28s var(--ease),height .28s var(--ease),background .28s,border-color .28s;will-change:transform"></div>
   <div data-cursor data-r="dot" style="position:fixed;top:0;left:0;z-index:9998;pointer-events:none;width:5px;height:5px;background:var(--ink);border-radius:50%;mix-blend-mode:difference;transform:translate(-50%,-50%);will-change:transform"></div>
 
+  <!-- UI Lab cue: dashed cursor→CTA arrow (ported from dynamic-hero), only draws inside #vlab -->
+  <canvas data-cursor data-r="labArrow" style="position:fixed;inset:0;z-index:40;pointer-events:none"></canvas>
+
   <!-- frame coords -->
   <div style="position:fixed;z-index:30;bottom:16px;left:var(--pad);pointer-events:none;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase">BUILT WITH CLAUDE</div>
   <div data-r="fscroll" style="position:fixed;z-index:30;bottom:16px;right:var(--pad);pointer-events:none;font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--faint);text-transform:uppercase">000%</div>
@@ -289,7 +292,7 @@ body{overflow-x:hidden}
         <div data-rv style="display:flex;flex-wrap:wrap;gap:8px;transition:.8s var(--ease) .16s">
           <sc-for list="{{ labChips }}" as="c" hint-placeholder-count="4"><span style="font-family:var(--mono);font-size:11px;color:var(--ink-2);border:1px solid var(--line);border-radius:999px;padding:6px 12px">{{ c }}</span></sc-for>
         </div>
-        <a href="https://ui-lab-build.vercel.app/" target="_blank" rel="noopener" data-mag data-rv style="align-self:flex-start;margin-top:4px;font-family:var(--mono);font-size:13px;letter-spacing:.02em;padding:15px 24px;border-radius:999px;background:var(--live);color:#0A0A0B;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:10px;transition:opacity .8s var(--ease) .2s,transform .8s var(--ease) .2s,gap .3s var(--ease)" style-hover="gap:14px">{{ t.labBtn }} ↗</a>
+        <a href="https://ui-lab-build.vercel.app/" target="_blank" rel="noopener" data-r="labCta" data-mag data-rv style="align-self:flex-start;margin-top:4px;font-family:var(--mono);font-size:13px;letter-spacing:.02em;padding:15px 24px;border-radius:999px;background:var(--live);color:#0A0A0B;text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:10px;transition:opacity .8s var(--ease) .2s,transform .8s var(--ease) .2s,gap .3s var(--ease)" style-hover="gap:14px">{{ t.labBtn }} ↗</a>
         <p style="font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.5;max-width:40ch">{{ t.labNote }}</p>
       </div>
       <!-- RIGHT: registry terminal -->
@@ -475,7 +478,7 @@ const DATA = {
     svcEy:"~/services",svcTitle:"What I do",
     prcEy:"~/process",prcTitle:"Brief to launch",prcLead:"Five steps, fully transparent. You always know what’s done and what’s next.",
     revEy:"~/reviews",revTitle:"What clients say",
-    labEy:"~/ui-lab",labTitleA:"A lab of UI",labTitleEm:"prompts.",labLead:"Beyond client work — a growing library of production UI I build from prompts. Open a live demo, or copy the whole prompt and paste the component straight into your own project.",labBtn:"Open the UI Lab",labNote:"12 components and counting — built with Claude, the same single-file craft as everything here.",labFoot:"ui-lab · next.js + tailwind + ts",labFootMeta:"12 components",labChips:["Next.js","Tailwind","TypeScript","live demos"],
+    labEy:"~/ui-lab",labTitleA:"A lab of UI",labTitleEm:"prompts.",labLead:"Beyond client work — a growing library of production UI I build from prompts. Open a live demo, or copy the whole prompt and paste the component straight into your own project.",labBtn:"Open the UI Lab",labNote:"21 components and counting — built with Claude, the same single-file craft as everything here.",labFoot:"ui-lab · next.js + tailwind + ts",labFootMeta:"21 components",labChips:["Next.js","Tailwind","TypeScript","live demos"],
     catEy:"~/catalog",catTitle:"Ready-made solutions",catLead:"Fixed-scope packages with transparent starting prices. Each one is tailored, never a constructor template.",
     ctaEy:"~/let’s-talk",ctaH2a:"Let’s build",ctaH2b:"something",ctaH2em:"fast.",ctaP:"Tell me about your project — we’ll lock the goal, timeline and price. I reply quickly.",ctaBtn:"Compile a spec",
     footAbout:"// studio",footBig:"A one-person studio that writes the spec and ships the site.",footNav:"// sections",footContact:"// contact",footCta:"Discuss a project →",footCopy:"© 2026 Vlad · Handcrafted, compiled with Claude",footTop:"Back to top ↑",
@@ -542,7 +545,7 @@ const DATA = {
     svcEy:"~/услуги",svcTitle:"Что я делаю",
     prcEy:"~/процесс",prcTitle:"От брифа до запуска",prcLead:"Пять шагов, полная прозрачность. Ты всегда знаешь, что готово и что дальше.",
     revEy:"~/отзывы",revTitle:"Что говорят клиенты",
-    labEy:"~/ui-lab",labTitleA:"Лаборатория UI-",labTitleEm:"промтов.",labLead:"Помимо клиентских проектов — растущая библиотека UI, которую я собираю из промтов. Открой живое демо или скопируй промт целиком и вставь компонент прямо в свой проект.",labBtn:"Открыть UI Lab",labNote:"12 компонентов и растёт — собрано с Claude, тем же single-file подходом, что и всё здесь.",labFoot:"ui-lab · next.js + tailwind + ts",labFootMeta:"12 компонентов",labChips:["Next.js","Tailwind","TypeScript","живые демо"],
+    labEy:"~/ui-lab",labTitleA:"Лаборатория UI-",labTitleEm:"промтов.",labLead:"Помимо клиентских проектов — растущая библиотека UI, которую я собираю из промтов. Открой живое демо или скопируй промт целиком и вставь компонент прямо в свой проект.",labBtn:"Открыть UI Lab",labNote:"21 компонент и растёт — собрано с Claude, тем же single-file подходом, что и всё здесь.",labFoot:"ui-lab · next.js + tailwind + ts",labFootMeta:"21 компонент",labChips:["Next.js","Tailwind","TypeScript","живые демо"],
     catEy:"~/каталог",catTitle:"Готовые решения",catLead:"Пакеты с фиксированным объёмом и прозрачной стартовой ценой. Каждый — под тебя, не шаблон из конструктора.",
     ctaEy:"~/давай-обсудим",ctaH2a:"Соберём",ctaH2b:"что-то",ctaH2em:"быстрое.",ctaP:"Расскажи о проекте — зафиксируем цель, сроки и стоимость. Отвечаю быстро.",ctaBtn:"Скомпилировать спеку",
     footAbout:"// студия",footBig:"Студия одного человека: пишу спецификацию и запускаю сайт.",footNav:"// разделы",footContact:"// контакты",footCta:"Обсудить проект →",footCopy:"© 2026 Влад · Сделано вручную, скомпилировано с Claude",footTop:"Наверх ↑",
@@ -649,9 +652,11 @@ const LAB = [
   {num:"01",title:"Cinematic Product Scroll",route:"/cinematic-product",tags:["scroll","anime.js"]},
   {num:"05",title:"Lunar Gravity Card",route:"/lunar-gravity",tags:["three.js","webgl"]},
   {num:"06",title:"Pricing Glass",route:"/pricing-glass",tags:["glass","framer-motion"]},
-  {num:"07",title:"Hero ASCII",route:"/hero-ascii",tags:["hero","mono"]},
-  {num:"11",title:"Agent Plan",route:"/agent-plan",tags:["list","ui"]},
-  {num:"12",title:"Robot Hero",route:"/robot-hero",tags:["3d","shaders"]}
+  {num:"12",title:"Robot Hero",route:"/robot-hero",tags:["3d","shaders"]},
+  {num:"15",title:"Ink Reveal",route:"/ink-reveal",tags:["canvas","reveal"]},
+  {num:"17",title:"World Map",route:"/map",tags:["map","svg"]},
+  {num:"18",title:"Horizon Hero",route:"/horizon-hero",tags:["three.js","gsap"]},
+  {num:"21",title:"Dynamic Hero",route:"/dynamic-hero",tags:["canvas","cursor"]}
 ];
 
 function motif(p){
@@ -803,6 +808,8 @@ class Component extends DCLogic {
 
     // ---- HERO CANVAS
     this.heroCanvas();
+    // ---- UI LAB CURSOR ARROW (ported from dynamic-hero component)
+    this.labArrow();
     // ---- REVIEW DRIFT
     this.reviewDrift();
     // ---- reveal observer
@@ -902,6 +909,53 @@ class Component extends DCLogic {
     if(reduce){ c.style.opacity=.18; draw(); } else draw();
   }
 
+  labArrow(){
+    const cvs=this.refs.labArrow, target=this.refs.labCta, sec=document.getElementById('vlab');
+    if(!cvs||!target||!sec) return;
+    if(matchMedia('(pointer:coarse)').matches || matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+    const ctx=cvs.getContext('2d');
+    const DPR=Math.min(devicePixelRatio||1,2);
+    const size=()=>{ cvs.width=innerWidth*DPR; cvs.height=innerHeight*DPR; cvs.style.width=innerWidth+'px'; cvs.style.height=innerHeight+'px'; ctx.setTransform(DPR,0,0,DPR,0,0); };
+    size(); this._onResizeLab=size; addEventListener('resize',size);
+    const mouse={x:null,y:null,in:false};
+    addEventListener('mousemove',e=>{ mouse.x=e.clientX; mouse.y=e.clientY; const r=sec.getBoundingClientRect(); mouse.in = e.clientX>=r.left && e.clientX<=r.right && e.clientY>=r.top && e.clientY<=r.bottom; });
+    let gA=0; const AC={r:227,g:169,b:60}; // --live #E3A93C
+    const draw=()=>{
+      ctx.clearRect(0,0,innerWidth,innerHeight);
+      const want=(mouse.in && mouse.x!=null)?1:0;
+      gA += (want-gA)*0.12;
+      if(gA>0.01 && mouse.x!=null){
+        const rect=target.getBoundingClientRect();
+        const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+        const x0=mouse.x, y0=mouse.y;
+        const a=Math.atan2(cy-y0,cx-x0);
+        const x1=cx-Math.cos(a)*(rect.width/2+14);
+        const y1=cy-Math.sin(a)*(rect.height/2+14);
+        const midX=(x0+x1)/2, midY=(y0+y1)/2;
+        const offset=Math.min(180,Math.hypot(x1-x0,y1-y0)*0.5);
+        const tt=Math.max(-1,Math.min(1,(y0-y1)/200));
+        const controlX=midX, controlY=midY+offset*tt;
+        const dist=Math.hypot(x1-x0,y1-y0);
+        const dOp=Math.min(1,(dist-Math.max(rect.width,rect.height)/2)/420);
+        const op=Math.max(0,dOp)*gA*0.9;
+        if(op>0.005){
+          ctx.strokeStyle=`rgba(${AC.r},${AC.g},${AC.b},${op})`;
+          ctx.lineWidth=1.6;
+          ctx.save();
+          ctx.beginPath(); ctx.moveTo(x0,y0); ctx.quadraticCurveTo(controlX,controlY,x1,y1);
+          ctx.setLineDash([9,6]); ctx.stroke(); ctx.restore();
+          const ang=Math.atan2(y1-controlY,x1-controlX), hl=11;
+          ctx.beginPath();
+          ctx.moveTo(x1,y1); ctx.lineTo(x1-hl*Math.cos(ang-Math.PI/6), y1-hl*Math.sin(ang-Math.PI/6));
+          ctx.moveTo(x1,y1); ctx.lineTo(x1-hl*Math.cos(ang+Math.PI/6), y1-hl*Math.sin(ang+Math.PI/6));
+          ctx.stroke();
+        }
+      }
+      this._lRaf=requestAnimationFrame(draw);
+    };
+    draw();
+  }
+
   reviewDrift(){
     const tr=this.refs.revTrack; if(!tr) return;
     let x=0,paused=false;
@@ -913,8 +967,8 @@ class Component extends DCLogic {
 
   componentWillUnmount(){
     clearInterval(this._clock); clearInterval(this._heroTimer); clearInterval(this._typeTimer);
-    cancelAnimationFrame(this._raf); cancelAnimationFrame(this._cRaf); cancelAnimationFrame(this._rRaf);
-    removeEventListener('scroll', this._onScroll); removeEventListener('mousemove', this._onMove); removeEventListener('resize', this._onResize);
+    cancelAnimationFrame(this._raf); cancelAnimationFrame(this._cRaf); cancelAnimationFrame(this._rRaf); cancelAnimationFrame(this._lRaf);
+    removeEventListener('scroll', this._onScroll); removeEventListener('mousemove', this._onMove); removeEventListener('resize', this._onResize); removeEventListener('resize', this._onResizeLab);
   }
 
   renderVals(){
